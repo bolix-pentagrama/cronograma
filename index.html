@@ -16858,6 +16858,171 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
 
 
 
+
+<script>
+/* v94 corrigida — unidades no padrão verde + melhoria do layout mobile das melhorias vinculadas */
+(function(){
+  function frameDoc(f){ try { return f.contentDocument || (f.contentWindow && f.contentWindow.document); } catch(e){ return null; } }
+  const css = `
+    /* v94c: cards de unidade no padrão verde, sem quebrar carregamento */
+    .unit-buttons { gap: 16px !important; }
+    .unit-btn {
+      min-height: 58px !important;
+      border: 1px solid rgba(168,204,58,.72) !important;
+      color: #ffffff !important;
+      background: linear-gradient(180deg, rgba(168,204,58,.28) 0%, rgba(135,167,46,.20) 100%) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 0 0 1px rgba(168,204,58,.08) !important;
+      position: relative !important;
+      overflow: visible !important;
+    }
+    .unit-btn::before {
+      height: 3px !important;
+      background: var(--brand) !important;
+      transform: scaleX(1) !important;
+    }
+    .unit-btn.active {
+      border-color: var(--brand) !important;
+      background: linear-gradient(180deg, #93b72f 0%, #5f7f1f 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 0 1px rgba(168,204,58,.95), 0 0 14px rgba(168,204,58,.28), inset 0 1px 0 rgba(255,255,255,.16) !important;
+    }
+    .unit-btn.active::after {
+      content: '' !important;
+      position: absolute !important;
+      left: 50% !important;
+      bottom: -8px !important;
+      transform: translateX(-50%) !important;
+      width: 0 !important;
+      height: 0 !important;
+      border-left: 7px solid transparent !important;
+      border-right: 7px solid transparent !important;
+      border-top: 8px solid var(--brand) !important;
+      pointer-events: none !important;
+    }
+    .unit-btn.obs-alerta::after {
+      content: '' !important;
+      position:absolute !important;
+      width:8px !important;
+      height:8px !important;
+      border-radius:999px !important;
+      right:12px !important;
+      top:12px !important;
+      left:auto !important;
+      bottom:auto !important;
+      transform:none !important;
+      border:0 !important;
+      background:#fb923c !important;
+      box-shadow:0 0 0 2px rgba(11,22,40,.95),0 0 8px rgba(251,146,60,.55) !important;
+      pointer-events:none !important;
+      z-index:6 !important;
+    }
+    .unit-btn.active.obs-alerta::after { border:0 !important; }
+    .unit-stats { margin-top: 10px !important; }
+
+    /* v94c: Melhorias Vinculadas mobile em card limpo */
+    @media (max-width: 700px) {
+      .container { padding-left: 12px !important; padding-right: 12px !important; }
+      .action-card { padding: 14px 12px !important; }
+      .melhorias-title { margin-top: 18px !important; }
+      .melhorias-table,
+      .melhorias-table tbody {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      .melhorias-table thead { display: none !important; }
+      .melhorias-table tbody tr:not(.obs-row) {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 14px !important;
+        padding: 14px 12px !important;
+        background: rgba(17,31,53,.72) !important;
+        border: 1px solid rgba(42,66,104,.70) !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+      }
+      .melhorias-table tbody tr:not(.obs-row) td {
+        display: grid !important;
+        grid-template-columns: 86px minmax(0,1fr) !important;
+        align-items: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        text-align: left !important;
+        white-space: normal !important;
+        overflow: hidden !important;
+      }
+      .melhorias-table tbody tr:not(.obs-row) td::before {
+        color: var(--muted) !important;
+        font-family: var(--font-mono) !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        letter-spacing: .04em !important;
+        text-transform: none !important;
+        margin: 0 !important;
+      }
+      .melhorias-table tbody tr:not(.obs-row) td.col-select::before { content: 'Selecionar' !important; }
+      .melhorias-table tbody tr:not(.obs-row) td.col-id::before { content: 'ID' !important; }
+      .melhorias-table tbody tr:not(.obs-row) td:nth-child(3)::before { content: 'Descrição' !important; }
+      .melhorias-table tbody tr:not(.obs-row) td.col-quem-faz::before { content: 'Quem faz?' !important; }
+      .melhorias-table tbody tr:not(.obs-row) td:nth-child(5)::before { content: 'Início' !important; }
+      .melhorias-table tbody tr:not(.obs-row) td:nth-child(6)::before { content: 'Prazo' !important; }
+      .melhorias-table tbody tr:not(.obs-row) td:nth-child(7)::before { content: 'Meses' !important; }
+      .melhorias-table tbody tr:not(.obs-row) td:nth-child(8)::before { content: 'Previsão' !important; }
+      .melhorias-table tbody tr:not(.obs-row) td:nth-child(9)::before { content: 'Status' !important; }
+      .melhorias-table tbody tr:not(.obs-row) td.col-obs::before { content: 'Observações' !important; }
+      .melhorias-table tbody tr:not(.obs-row) td:nth-child(3) {
+        grid-template-columns: 1fr !important;
+        gap: 5px !important;
+        align-items: start !important;
+      }
+      .melhorias-table tbody tr:not(.obs-row) td:nth-child(3)::before { display: block !important; }
+      .melhorias-table tbody tr:not(.obs-row) input,
+      .melhorias-table tbody tr:not(.obs-row) select,
+      .melhorias-table tbody tr:not(.obs-row) button {
+        max-width: 100% !important;
+      }
+      .melhorias-table tbody tr:not(.obs-row) .cell-date { width: 148px !important; min-width: 0 !important; }
+      .melhorias-table tbody tr:not(.obs-row) .quem-faz-select { width: 148px !important; min-width: 0 !important; }
+      .melhorias-table tbody tr:not(.obs-row) .cell-prazo-select,
+      .melhorias-table tbody tr:not(.obs-row) .cell-meses-select { width: 78px !important; }
+      .melhorias-table tbody tr:not(.obs-row) .status-select,
+      .melhorias-table tbody tr:not(.obs-row) .action-status-select { width: 178px !important; min-width: 0 !important; max-width: 100% !important; }
+      .melhorias-table tbody tr:not(.obs-row) .col-obs { justify-items: start !important; }
+      .melhorias-table tbody tr:not(.obs-row) .obs-toggle { margin: 0 !important; }
+      .melhorias-table tr.obs-row > td {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 0 14px !important;
+      }
+      .obs-wrapper { max-width: 100% !important; overflow: hidden !important; }
+    }
+  `;
+  function inject(doc){
+    if (!doc || !doc.head) return;
+    var old = doc.getElementById('v94c-unit-mobile-fix-style');
+    if (old) old.remove();
+    var st = doc.createElement('style');
+    st.id = 'v94c-unit-mobile-fix-style';
+    st.textContent = css;
+    doc.head.appendChild(st);
+  }
+  function patchAll(){
+    document.querySelectorAll('iframe.reset-frame').forEach(function(f){ var d = frameDoc(f); if (d) inject(d); });
+  }
+  window.addEventListener('load', function(){ setTimeout(patchAll,100); setTimeout(patchAll,700); setTimeout(patchAll,1800); });
+  document.addEventListener('click', function(){ setTimeout(patchAll,80); }, true);
+  setTimeout(patchAll, 100);
+})();
+</script>
+
 </body>
 </html>
 <!-- v30 — destaque visual da aba principal ativa -->
