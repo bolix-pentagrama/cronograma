@@ -17485,23 +17485,25 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
 </script>
 
 
-<script id="v107-mobile-acoes-clean">
+
+
+
+<script id="v108-mobile-acoes-nativo">
 (function(){
-  const MOBILE_CSS = `
+  const STYLE_ID = 'v108-mobile-acoes-nativo-style';
+  const css = `
   @media (max-width: 700px) {
-    html, body { max-width:100% !important; overflow-x:hidden !important; }
-    body { font-size:12px !important; line-height:1.45 !important; }
+    html, body { overflow-x:hidden !important; max-width:100% !important; }
+    body { font-size:12px !important; }
     .container, main, section, .tab-pane { width:100% !important; max-width:100% !important; padding-left:10px !important; padding-right:10px !important; box-sizing:border-box !important; overflow-x:hidden !important; }
-    .card, .panel, .check-detail, .field-group, .signoff-bar, .reset-smart-block, .top-prazo-alert, .pro-panel, .intel-alert { width:100% !important; max-width:100% !important; box-sizing:border-box !important; padding:14px !important; margin-left:0 !important; margin-right:0 !important; overflow-x:hidden !important; }
-    .g2,.g3,.g4,.g5,.g6,.metrics-row,.score-grid,.validation-summary,.sb-grid,.signoff-score-grid,.pro-grid,.analise-grid,.field-group .group-fields,.reset-smart-block { display:grid !important; grid-template-columns:1fr !important; gap:12px !important; }
-    .field,.sb-field,.meta-item { width:100% !important; max-width:100% !important; min-width:0 !important; }
-    input,select,textarea,button { max-width:100% !important; box-sizing:border-box !important; }
-    input:not([type="checkbox"]):not([type="radio"]), select, textarea { width:100% !important; min-width:0 !important; }
-    .actions-row,.sb-actions { display:grid !important; grid-template-columns:1fr !important; width:100% !important; gap:10px !important; }
-    .actions-row .btn,.sb-actions .btn { width:100% !important; justify-content:center !important; }
-    .section-title,h1,h2,h3 { overflow-wrap:anywhere !important; word-break:normal !important; }
+    .card, .panel, .check-detail, .field-group, .signoff-bar, .pro-panel { width:100% !important; max-width:100% !important; box-sizing:border-box !important; padding:14px !important; margin-left:0 !important; margin-right:0 !important; overflow-x:hidden !important; }
+    .g2, .g3, .g4, .g5, .g6, .metrics-row, .score-grid, .validation-summary, .sb-grid, .signoff-score-grid, .pro-grid, .analise-grid, .field-group .group-fields { display:grid !important; grid-template-columns:1fr !important; gap:12px !important; }
+    input:not([type="checkbox"]):not([type="radio"]), select, textarea { width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; }
+    .actions-row, .sb-actions { display:grid !important; grid-template-columns:1fr !important; gap:10px !important; }
+    .actions-row .btn, .sb-actions .btn { width:100% !important; justify-content:center !important; }
+    body.v108-mobile-mode .v108-hide-mobile { display:none !important; }
     .melhorias-table-wrap { width:100% !important; max-width:100% !important; overflow-x:visible !important; }
-    .melhorias-table-pro,.melhorias-table-pro thead,.melhorias-table-pro tbody,.melhorias-table-pro tr,.melhorias-table-pro th,.melhorias-table-pro td { display:block !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; }
+    .melhorias-table-pro, .melhorias-table-pro thead, .melhorias-table-pro tbody, .melhorias-table-pro tr, .melhorias-table-pro th, .melhorias-table-pro td { display:block !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; }
     .melhorias-table-pro thead { display:none !important; }
     .melhorias-table-pro tr.melhoria-item { background:var(--surface2) !important; border:1px solid var(--border) !important; border-radius:12px !important; padding:12px !important; margin:0 0 12px !important; }
     .melhorias-table-pro tr.melhoria-item td { border-bottom:0 !important; padding:6px 0 !important; }
@@ -17519,20 +17521,30 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     .melhorias-table-pro textarea { min-height:72px !important; resize:vertical !important; }
     .melhorias-table-pro .amb-radio-group { justify-content:flex-start !important; flex-wrap:wrap !important; }
     .prazo-status-cell { text-align:left !important; }
-    .prazo-dot { margin-top:3px !important; }
     .amb-header { display:none !important; }
     .amb-row { display:block !important; width:100% !important; padding:12px !important; border:1px solid var(--border) !important; border-radius:10px !important; margin-bottom:10px !important; }
     .amb-cell { width:100% !important; padding:6px 0 !important; }
-    .mobile-hide-actions-advanced { display:none !important; }
+    .top-prazo-alert { display:block !important; text-align:left !important; padding:14px !important; }
+    .top-prazo-alert .alert-kpi { font-size:24px !important; margin-top:10px !important; text-align:center !important; }
   }`;
-  const ADVANCED = ['leitura reset','diagnostico cruzado','diagnóstico cruzado','perguntas reset','letras reset','analise operacional','análise operacional','score da atuacao interna','score da atuação interna','analise estrategica','análise estratégica','implantacao e eficacia','implantação e eficácia','pontuacao das melhorias','pontuação das melhorias'];
-  function norm(v){ return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim(); }
-  function inject(doc){ if(!doc || doc.getElementById('v107-mobile-acoes-clean-style')) return; var st=doc.createElement('style'); st.id='v107-mobile-acoes-clean-style'; st.textContent=MOBILE_CSS; (doc.head||doc.documentElement).appendChild(st); }
-  function hide(doc){ if(!doc) return; Array.prototype.forEach.call(doc.querySelectorAll('h1,h2,h3,.section-title,.pro-panel-title,.check-detail-title,.group-title'), function(el){ var t=norm(el.textContent); if(!t) return; if(!ADVANCED.some(function(k){return t.indexOf(norm(k))>=0;})) return; var b=el.closest('.card,.panel,.check-detail,.field-group,.pro-panel,section,.tab-pane') || el.parentElement; if(b && b!==doc.body) b.classList.add('mobile-hide-actions-advanced'); }); }
-  function patch(frame){ try{ var doc=frame.contentDocument || (frame.contentWindow && frame.contentWindow.document); inject(doc); hide(doc); }catch(e){} }
-  function all(){ document.querySelectorAll('#pane-acoes iframe.reset-frame').forEach(patch); }
-  window.addEventListener('load', function(){ all(); setInterval(all,1200); });
-  document.addEventListener('DOMContentLoaded', all);
+  const HIDE_TITLES = ['leitura reset','diagnostico cruzado','diagnóstico cruzado','perguntas reset','letras reset','analise operacional','análise operacional','score da atuacao interna','score da atuação interna','analise estrategica','análise estratégica','implantacao e eficacia','implantação e eficácia','pontuacao das melhorias','pontuação das melhorias','diagnostico reset','diagnóstico reset'];
+  function norm(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();}
+  function isMobile(){return window.innerWidth<=700 || (window.matchMedia&&window.matchMedia('(max-width: 700px)').matches);}
+  function closestBlock(el, doc){return el.closest('.card, .panel, .check-detail, .field-group, .pro-panel, section') || el.parentElement;}
+  function apply(doc){
+    if(!doc||!doc.body)return;
+    if(!doc.getElementById(STYLE_ID)){const st=doc.createElement('style');st.id=STYLE_ID;st.textContent=css;(doc.head||doc.documentElement).appendChild(st);}
+    doc.body.classList.toggle('v108-mobile-mode', isMobile());
+    Array.from(doc.querySelectorAll('h1,h2,h3,h4,.section-title,.section-sub,.pro-panel-title,.check-detail-title,.group-title,.alert-title')).forEach(function(el){
+      const t=norm(el.textContent); if(!t)return; const hide=HIDE_TITLES.some(k=>t.includes(norm(k))); if(hide){const b=closestBlock(el,doc); if(b&&b!==doc.body)b.classList.add('v108-hide-mobile');}
+    });
+    Array.from(doc.querySelectorAll('.amb-table')).forEach(function(tbl){const t=norm(tbl.textContent); if(t.includes('existe problema perceptivel')||t.includes('impacta decisao')||t.includes('gera perda financeira')||t.includes('resgatar')||t.includes('entrar')||t.includes('segurar')){const b=tbl.closest('.card,.panel,section,.check-detail')||tbl;b.classList.add('v108-hide-mobile');}});
+    Array.from(doc.querySelectorAll('.score-grid,.signoff-score,.validation-summary')).forEach(function(el){const t=norm(el.textContent); if(t.includes('aprovados')||t.includes('reprovados')||t.includes('base')||t.includes('progresso ponderado')){const b=el.closest('.card,.panel,section')||el;b.classList.add('v108-hide-mobile');}});
+  }
+  function patchFrame(frame){try{const doc=frame.contentDocument||(frame.contentWindow&&frame.contentWindow.document);apply(doc);}catch(e){}}
+  function patchAll(){document.querySelectorAll('#pane-acoes iframe.reset-frame').forEach(patchFrame);}
+  window.addEventListener('load',function(){patchAll();setTimeout(patchAll,300);setTimeout(patchAll,1000);setInterval(patchAll,1500);});
+  window.addEventListener('resize',patchAll);
 })();
 </script>
 
