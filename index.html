@@ -201,6 +201,18 @@
   .operacional-table .op-status { width: 150px !important; }
   .operacional-table .op-prioridade { width: 130px !important; }
 </style>
+
+
+<style id="v101-melhoria-200px-fix">
+  /* V101 corrigida — ajuste pontual: Melhoria com 200px, sem alterar mobile */
+  @media (min-width: 901px) {
+    #section-operacional .operacional-table .op-melhoria {
+      width: 180px !important;
+      min-width: 180px !important;
+      max-width: 180px !important;
+    }
+  }
+</style>
 </head>
 <body>
 <div class="reset-shell">
@@ -1662,6 +1674,144 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
       line-height: 1.4 !important;
     }
   }
+
+
+  /* V96: Agenda Operacional — início/término + indicador de prazo (desktop), sem alterar mobile cards */
+  .op-head-sub { font-size: 8px; opacity: .72; letter-spacing: .05em; }
+  #section-operacional .operacional-table { min-width: 0 !important; width: 100% !important; table-layout: fixed !important; }
+  #section-operacional .operacional-table .op-data { width: 60px !important; }
+  #section-operacional .operacional-table .op-previsao { width: 60px !important; white-space: nowrap; font-family: var(--font-mono); color: #e8f0fe; }
+  #section-operacional .operacional-table .op-area { width: 100px !important; }
+  #section-operacional .operacional-table .op-status { width: 135px !important; }
+  #section-operacional .operacional-table .op-prioridade { width: 95px !important; }
+  #section-operacional .operacional-table .op-atraso { width: 32px !important; min-width: 32px !important; max-width: 32px !important; padding-left: 0 !important; padding-right: 0 !important; text-align: center !important; vertical-align: middle !important; }
+  #section-operacional .operacional-table th.op-atraso { text-align: center !important; }
+  #section-operacional .operacional-table td.op-atraso { display: table-cell !important; }
+  #section-operacional .prioridade-select { width: 82px !important; min-width: 82px !important; }
+  .op-prazo-dot { width: 15px; height: 15px; border-radius: 50%; display: block; position: relative; vertical-align: middle; margin: 0 auto; }
+  .op-prazo-dot::before { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: currentColor; }
+  .op-prazo-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 2px solid currentColor; opacity: .55; box-shadow: 0 0 8px currentColor; }
+  .op-prazo-vermelho { color: #f87171; }
+  .op-prazo-amarelo { color: #fbbf24; }
+  .op-prazo-verde { color: #34d399; }
+
+  @media (max-width: 700px) {
+    #section-operacional .operacional-table .op-data::before { content: 'Início'; }
+    #section-operacional .operacional-table .op-previsao::before { content: 'Término'; }
+    #section-operacional .operacional-table .op-atraso::before { content: 'Prazo'; }
+    #section-operacional .operacional-table .op-previsao,
+    #section-operacional .operacional-table .op-atraso {
+      width: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 12px !important;
+      color: #e8f0fe;
+      font-family: var(--font-mono);
+    }
+    #section-operacional .operacional-table .op-atraso { justify-content: flex-start !important; }
+    #section-operacional .operacional-table .op-atraso .op-prazo-dot {
+      margin: 0 !important;
+      flex: 0 0 15px !important;
+    }
+
+  }
+
+
+
+  /* V99 CORRIGIDO: ajustes desktop Agenda Operacional sem interferir no mobile */
+  @media (min-width: 701px) {
+    #section-operacional .operacional-table {
+      table-layout: fixed !important;
+      width: 100% !important;
+    }
+    #section-operacional .operacional-table .op-data {
+      width: 70px !important;
+      min-width: 70px !important;
+      max-width: 70px !important;
+      white-space: nowrap !important;
+    }
+    #section-operacional .operacional-table .op-previsao {
+      width: 70px !important;
+      min-width: 70px !important;
+      max-width: 70px !important;
+      white-space: nowrap !important;
+    }
+    #section-operacional .operacional-table .op-acao {
+      width: 190px !important;
+      min-width: 190px !important;
+      max-width: 190px !important;
+    }
+    #section-operacional .operacional-table .op-atraso {
+      width: 32px !important;
+      min-width: 32px !important;
+      max-width: 32px !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+    }
+    #section-operacional .operacional-table td.op-atraso {
+      display: table-cell !important;
+      text-align: center !important;
+    }
+    #section-operacional .operacional-table .op-atraso .op-prazo-dot {
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+  }
+
+
+
+  /* V100 CORRIGIDO: datas abreviadas na Agenda Operacional + Prazo 50px, sem alterar mobile */
+  @media (min-width: 701px) {
+    #section-operacional .operacional-table .op-data {
+      width: 70px !important;
+      min-width: 70px !important;
+      max-width: 70px !important;
+      white-space: nowrap !important;
+    }
+    #section-operacional .operacional-table .op-previsao {
+      width: 70px !important;
+      min-width: 70px !important;
+      max-width: 70px !important;
+      white-space: nowrap !important;
+    }
+    #section-operacional .operacional-table .op-acao {
+      width: 190px !important;
+      min-width: 190px !important;
+      max-width: 190px !important;
+    }
+    #section-operacional .operacional-table .op-atraso {
+      width: 50px !important;
+      min-width: 50px !important;
+      max-width: 50px !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+    }
+    #section-operacional .operacional-table td.op-atraso {
+      display: table-cell !important;
+      text-align: center !important;
+    }
+    #section-operacional .operacional-table .op-atraso .op-prazo-dot {
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+  }
+&lt;/style&gt;
+
+
+&lt;style id=&quot;v101-melhoria-200px-fix&quot;&gt;
+  /* V101 corrigida — ajuste pontual: Melhoria com 200px, sem alterar mobile */
+  @media (min-width: 901px) {
+    #section-operacional .operacional-table .op-melhoria {
+      width: 180px !important;
+      min-width: 180px !important;
+      max-width: 180px !important;
+    }
+  }
 &lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
@@ -1741,6 +1891,7 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
           &lt;div class=&quot;filter-box&quot;&gt;&lt;label for=&quot;op-filter-quem&quot;&gt;Quem faz?&lt;/label&gt;&lt;select id=&quot;op-filter-quem&quot; onchange=&quot;renderAgendaOperacional()&quot;&gt;&lt;/select&gt;&lt;/div&gt;
           &lt;div class=&quot;filter-box&quot;&gt;&lt;label for=&quot;op-filter-status&quot;&gt;Status&lt;/label&gt;&lt;select id=&quot;op-filter-status&quot; onchange=&quot;renderAgendaOperacional()&quot;&gt;&lt;/select&gt;&lt;/div&gt;
           &lt;div class=&quot;filter-box&quot;&gt;&lt;label for=&quot;op-filter-prioridade&quot;&gt;Prioridade&lt;/label&gt;&lt;select id=&quot;op-filter-prioridade&quot; onchange=&quot;renderAgendaOperacional()&quot;&gt;&lt;/select&gt;&lt;/div&gt;
+          &lt;div class=&quot;filter-box&quot;&gt;&lt;label for=&quot;op-filter-prazo&quot;&gt;Prazo&lt;/label&gt;&lt;select id=&quot;op-filter-prazo&quot; onchange=&quot;renderAgendaOperacional()&quot;&gt;&lt;option value=&quot;&quot;&gt;Todos&lt;/option&gt;&lt;option value=&quot;Atrasado&quot;&gt;Atrasado&lt;/option&gt;&lt;option value=&quot;Próximo&quot;&gt;Próximo&lt;/option&gt;&lt;option value=&quot;No prazo&quot;&gt;No prazo&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;
           &lt;div class=&quot;filter-box operacional-filter-actions&quot;&gt;&lt;button class=&quot;op-clear-filters-btn&quot; type=&quot;button&quot; onclick=&quot;limparFiltrosAgendaOperacional()&quot;&gt;Limpar filtros&lt;/button&gt;&lt;/div&gt;
         &lt;/div&gt;
       &lt;/div&gt;
@@ -1748,15 +1899,17 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
         &lt;table class=&quot;operacional-table&quot;&gt;
           &lt;thead&gt;
             &lt;tr&gt;
-              &lt;th&gt;Data&lt;/th&gt;
-              &lt;th&gt;Unidade&lt;/th&gt;
-              &lt;th&gt;Área da Ação&lt;/th&gt;
-              &lt;th&gt;Pilar&lt;/th&gt;
-              &lt;th&gt;Quem Faz?&lt;/th&gt;
-              &lt;th&gt;Ação&lt;/th&gt;
-              &lt;th&gt;Melhoria&lt;/th&gt;
-              &lt;th&gt;Status&lt;/th&gt;
-              &lt;th&gt;Prioridade&lt;/th&gt;
+              &lt;th class=&quot;op-data&quot;&gt;INÍCIO&lt;/th&gt;
+              &lt;th class=&quot;op-previsao&quot;&gt;TÉRMINO&lt;/th&gt;
+              &lt;th class=&quot;op-unidade&quot;&gt;Unidade&lt;/th&gt;
+              &lt;th class=&quot;op-area&quot;&gt;Área da Ação&lt;/th&gt;
+              &lt;th class=&quot;op-pilar&quot;&gt;Pilar&lt;/th&gt;
+              &lt;th class=&quot;op-quem&quot;&gt;Quem Faz?&lt;/th&gt;
+              &lt;th class=&quot;op-acao&quot;&gt;Ação&lt;/th&gt;
+              &lt;th class=&quot;op-melhoria&quot;&gt;Melhoria&lt;/th&gt;
+              &lt;th class=&quot;op-status&quot;&gt;Status&lt;/th&gt;
+              &lt;th class=&quot;op-prioridade&quot;&gt;Prioridade&lt;/th&gt;
+              &lt;th class=&quot;op-atraso&quot;&gt;Prazo&lt;/th&gt;
             &lt;/tr&gt;
           &lt;/thead&gt;
           &lt;tbody id=&quot;agenda-operacional-body&quot;&gt;&lt;/tbody&gt;
@@ -9066,7 +9219,7 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     if (!iso) return &#x27;&#x27;;
     const parts = String(iso).split(&#x27;-&#x27;);
     if (parts.length !== 3) return iso;
-    return parts[2] + &#x27;/&#x27; + parts[1] + &#x27;/&#x27; + parts[0];
+    return parts[2] + &#x27;/&#x27; + parts[1] + &#x27;/&#x27; + String(parts[0]).slice(-2);
   }
   function normalizarTextoFiltro(v) {
     return String(v || &#x27;&#x27;).toLowerCase().normalize(&#x27;NFD&#x27;).replace(/[\u0300-\u036f]/g, &#x27;&#x27;);
@@ -9130,11 +9283,12 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
         (action.melhorias || []).forEach(m =&gt; {
           const mid = getMelhoriaId(unidade, action, m);
           const inicioISO = getSavedField(mid, &#x27;inicio&#x27;, dateISOFromBR(m.inicio));
+          const previsaoISO = getSavedField(mid, &#x27;previsao&#x27;, dateISOFromBR(m.previsao));
           const status = getSavedField(mid, &#x27;status&#x27;, m.status || &#x27;Não iniciada&#x27;);
           const quem = getQuemFazAgenda(mid, m);
           const prioridade = getSavedField(mid, &#x27;prioridade&#x27;, &#x27;Baixa&#x27;);
           items.push({
-            mid, dataISO: inicioISO || &#x27;&#x27;, data: formatBRFromISO(inicioISO), unidade,
+            mid, dataISO: inicioISO || &#x27;&#x27;, data: formatBRFromISO(inicioISO), previsaoISO: previsaoISO || &#x27;&#x27;, previsao: formatBRFromISO(previsaoISO), unidade,
             area: ctx.area || &#x27;&#x27;, pilar: ctx.pillar || &#x27;&#x27;, quem,
             acao: acaoNome, melhoria: (m.idm ? m.idm + &#x27;- &#x27; : &#x27;&#x27;) + (m.desc || &#x27;&#x27;),
             status, prioridade
@@ -9187,13 +9341,30 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     if (s === 'terceiro') return 'op-quem-terceiro';
     return 'op-quem-vazio';
   }
+  function operacionalPrazoTipo(previsaoISO) {
+    if (!previsaoISO) return 'No prazo';
+    const hoje = new Date();
+    hoje.setHours(0,0,0,0);
+    const fim = new Date(previsaoISO + 'T00:00:00');
+    if (isNaN(fim.getTime())) return 'No prazo';
+    const dias = Math.ceil((fim.getTime() - hoje.getTime()) / 86400000);
+    if (dias < 0) return 'Atrasado';
+    if (dias <= 3) return 'Próximo';
+    return 'No prazo';
+  }
+  function operacionalPrazoClass(previsaoISO) {
+    const tipo = operacionalPrazoTipo(previsaoISO);
+    if (tipo === 'Atrasado') return 'op-prazo-vermelho';
+    if (tipo === 'Próximo') return 'op-prazo-amarelo';
+    return 'op-prazo-verde';
+  }
   function aoMudarPrioridade(mid, el) {
     try { localStorage.setItem(FIELD_KEY_PREFIX + mid + &#x27;.prioridade&#x27;, el.value); } catch(e) {}
     el.className = &#x27;prioridade-select &#x27; + prioridadeClass(el.value);
     preencherFiltrosAgendaOperacional();
   }
   function limparFiltrosAgendaOperacional() {
-    ['op-filter-text','op-filter-data-inicio','op-filter-data-fim','op-filter-unidade','op-filter-area','op-filter-pilar','op-filter-quem','op-filter-status','op-filter-prioridade'].forEach(id =&gt; {
+    ['op-filter-text','op-filter-data-inicio','op-filter-data-fim','op-filter-unidade','op-filter-area','op-filter-pilar','op-filter-quem','op-filter-status','op-filter-prioridade','op-filter-prazo'].forEach(id =&gt; {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
@@ -9212,6 +9383,7 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     const fQuem = document.getElementById(&#x27;op-filter-quem&#x27;)?.value || &#x27;&#x27;;
     const fStatus = document.getElementById(&#x27;op-filter-status&#x27;)?.value || &#x27;&#x27;;
     const fPrioridade = document.getElementById(&#x27;op-filter-prioridade&#x27;)?.value || &#x27;&#x27;;
+    const fPrazo = document.getElementById(&#x27;op-filter-prazo&#x27;)?.value || &#x27;&#x27;;
     const items = getAgendaOperacionalItems().filter(item =&gt; {
       if (fDataInicio &amp;&amp; (!item.dataISO || item.dataISO &lt; fDataInicio)) return false;
       if (fDataFim &amp;&amp; (!item.dataISO || item.dataISO &gt; fDataFim)) return false;
@@ -9221,14 +9393,15 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
       if (fQuem &amp;&amp; item.quem !== fQuem) return false;
       if (fStatus &amp;&amp; item.status !== fStatus) return false;
       if (fPrioridade &amp;&amp; item.prioridade !== fPrioridade) return false;
+      if (fPrazo &amp;&amp; operacionalPrazoTipo(item.previsaoISO) !== fPrazo) return false;
       if (text) {
-        const hay = normalizarTextoFiltro([item.data, item.unidade, item.area, item.pilar, item.quem, item.acao, item.melhoria, item.status, item.prioridade].join(&#x27; &#x27;));
+        const hay = normalizarTextoFiltro([item.data, item.previsao, item.unidade, item.area, item.pilar, item.quem, item.acao, item.melhoria, item.status, item.prioridade, operacionalPrazoTipo(item.previsaoISO)].join(&#x27; &#x27;));
         if (!hay.includes(text)) return false;
       }
       return true;
     });
     if (!items.length) {
-      body.innerHTML = &#x27;&lt;tr&gt;&lt;td colspan=&quot;9&quot; class=&quot;calendar-empty&quot;&gt;Nenhuma melhoria encontrada.&lt;/td&gt;&lt;/tr&gt;&#x27;;
+      body.innerHTML = &#x27;&lt;tr&gt;&lt;td colspan=&quot;11&quot; class=&quot;calendar-empty&quot;&gt;Nenhuma melhoria encontrada.&lt;/td&gt;&lt;/tr&gt;&#x27;;
       if (count) count.innerHTML = &#x27;&lt;strong&gt;0&lt;/strong&gt; registros encontrados&#x27;;
       return;
     }
@@ -9236,6 +9409,7 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
       const pCls = prioridadeClass(item.prioridade);
       return `&lt;tr&gt;
         &lt;td class=&quot;op-data&quot;&gt;${escapeHtml(item.data || &#x27;—&#x27;)}&lt;/td&gt;
+        &lt;td class=&quot;op-previsao&quot;&gt;${escapeHtml(item.previsao || &#x27;—&#x27;)}&lt;/td&gt;
         &lt;td class=&quot;op-unidade&quot;&gt;${escapeHtml(item.unidade)}&lt;/td&gt;
         &lt;td class=&quot;op-area&quot;&gt;${escapeHtml(item.area || &#x27;—&#x27;)}&lt;/td&gt;
         &lt;td class=&quot;op-pilar&quot;&gt;${escapeHtml(item.pilar || &#x27;—&#x27;)}&lt;/td&gt;
@@ -9244,6 +9418,7 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
         &lt;td class=&quot;op-melhoria&quot;&gt;${escapeHtml(item.melhoria)}&lt;/td&gt;
         &lt;td class=&quot;op-status&quot;&gt;&lt;span class=&quot;op-chip op-status-chip ${operacionalStatusClass(item.status)}&quot;&gt;${escapeHtml(item.status || &#x27;—&#x27;)}&lt;/span&gt;&lt;/td&gt;
         &lt;td class=&quot;op-prioridade&quot;&gt;&lt;select class=&quot;prioridade-select ${pCls}&quot; onchange=&quot;aoMudarPrioridade(&#x27;${escapeHtml(item.mid)}&#x27;, this)&quot;&gt;${buildPrioridadeOptions(item.prioridade)}&lt;/select&gt;&lt;/td&gt;
+        &lt;td class=&quot;op-atraso&quot;&gt;&lt;span class=&quot;op-prazo-dot ${operacionalPrazoClass(item.previsaoISO)}&quot; title=&quot;${operacionalPrazoTipo(item.previsaoISO)}&quot;&gt;&lt;/span&gt;&lt;/td&gt;
       &lt;/tr&gt;`;
     }).join(&#x27;&#x27;);
     if (count) count.innerHTML = `&lt;strong&gt;${items.length}&lt;/strong&gt; registro${items.length === 1 ? &#x27;&#x27; : &#x27;s&#x27;} encontrado${items.length === 1 ? &#x27;&#x27; : &#x27;s&#x27;}`;
@@ -9264,7 +9439,7 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
       toolbar.style.setProperty(&#x27;align-items&#x27;, &#x27;flex-end&#x27;, &#x27;important&#x27;);
       toolbar.style.setProperty(&#x27;gap&#x27;, &#x27;10px 12px&#x27;, &#x27;important&#x27;);
       toolbar.style.setProperty(&#x27;grid-template-columns&#x27;, &#x27;none&#x27;, &#x27;important&#x27;);
-      var filterWidths = [&#x27;240px&#x27;,&#x27;180px&#x27;,&#x27;180px&#x27;,&#x27;180px&#x27;,&#x27;180px&#x27;,&#x27;180px&#x27;,&#x27;180px&#x27;,&#x27;160px&#x27;,&#x27;160px&#x27;,&#x27;220px&#x27;];
+      var filterWidths = [&#x27;240px&#x27;,&#x27;180px&#x27;,&#x27;180px&#x27;,&#x27;180px&#x27;,&#x27;180px&#x27;,&#x27;180px&#x27;,&#x27;180px&#x27;,&#x27;160px&#x27;,&#x27;150px&#x27;,&#x27;130px&#x27;,&#x27;220px&#x27;];
       Array.prototype.forEach.call(toolbar.querySelectorAll(&#x27;.filter-box&#x27;), function(box, idx) {
         var w = filterWidths[idx] || &#x27;180px&#x27;;
         box.style.setProperty(&#x27;width&#x27;, w, &#x27;important&#x27;);
@@ -9284,31 +9459,41 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
       table.style.setProperty(&#x27;width&#x27;, &#x27;100%&#x27;, &#x27;important&#x27;);
       table.style.setProperty(&#x27;table-layout&#x27;, &#x27;fixed&#x27;, &#x27;important&#x27;);
       var cols = [
-        [&#x27;op-data&#x27;,&#x27;50px&#x27;],
+        [&#x27;op-data&#x27;,&#x27;70px&#x27;],
+        [&#x27;op-previsao&#x27;,&#x27;70px&#x27;],
         [&#x27;op-unidade&#x27;,&#x27;110px&#x27;],
-        [&#x27;op-area&#x27;,&#x27;90px&#x27;],
+        [&#x27;op-area&#x27;,&#x27;100px&#x27;],
         [&#x27;op-pilar&#x27;,&#x27;90px&#x27;],
         [&#x27;op-quem&#x27;,&#x27;110px&#x27;],
-        [&#x27;op-acao&#x27;,&#x27;300px&#x27;],
-        [&#x27;op-melhoria&#x27;,&#x27;auto&#x27;],
+        [&#x27;op-acao&#x27;,&#x27;190px&#x27;],
+        [&#x27;op-melhoria&#x27;,&#x27;180px&#x27;],
         [&#x27;op-status&#x27;,&#x27;130px&#x27;],
-        [&#x27;op-prioridade&#x27;,&#x27;120px&#x27;]
+        [&#x27;op-prioridade&#x27;,&#x27;90px&#x27;],
+        [&#x27;op-atraso&#x27;,&#x27;50px&#x27;]
       ];
       cols.forEach(function(pair) {
         Array.prototype.forEach.call(table.querySelectorAll(&#x27;.&#x27; + pair[0]), function(cell) {
-          if (pair[1] === &#x27;auto&#x27;) {
-            cell.style.setProperty(&#x27;width&#x27;, &#x27;auto&#x27;, &#x27;important&#x27;);
-            cell.style.setProperty(&#x27;min-width&#x27;, &#x27;0&#x27;, &#x27;important&#x27;);
+          cell.style.setProperty(&#x27;width&#x27;, pair[1], &#x27;important&#x27;);
+          cell.style.setProperty(&#x27;min-width&#x27;, pair[1], &#x27;important&#x27;);
+          cell.style.setProperty(&#x27;max-width&#x27;, pair[1], &#x27;important&#x27;);
+          if (pair[0] === &#x27;op-atraso&#x27;) {
+            cell.style.setProperty(&#x27;padding-left&#x27;, &#x27;0&#x27;, &#x27;important&#x27;);
+            cell.style.setProperty(&#x27;padding-right&#x27;, &#x27;0&#x27;, &#x27;important&#x27;);
+            cell.style.setProperty(&#x27;text-align&#x27;, &#x27;center&#x27;, &#x27;important&#x27;);
+            cell.style.setProperty(&#x27;vertical-align&#x27;, &#x27;middle&#x27;, &#x27;important&#x27;);
           } else {
-            cell.style.setProperty(&#x27;width&#x27;, pair[1], &#x27;important&#x27;);
-            cell.style.setProperty(&#x27;min-width&#x27;, &#x27;0&#x27;, &#x27;important&#x27;);
+            cell.style.setProperty(&#x27;padding-left&#x27;, &#x27;7px&#x27;, &#x27;important&#x27;);
+            cell.style.setProperty(&#x27;padding-right&#x27;, &#x27;7px&#x27;, &#x27;important&#x27;);
           }
-          cell.style.setProperty(&#x27;padding-left&#x27;, &#x27;7px&#x27;, &#x27;important&#x27;);
-          cell.style.setProperty(&#x27;padding-right&#x27;, &#x27;7px&#x27;, &#x27;important&#x27;);
         });
       });
+      Array.prototype.forEach.call(table.querySelectorAll(&#x27;td.op-atraso .op-prazo-dot&#x27;), function(dot) {
+        dot.style.setProperty(&#x27;display&#x27;, &#x27;block&#x27;, &#x27;important&#x27;);
+        dot.style.setProperty(&#x27;margin-left&#x27;, &#x27;auto&#x27;, &#x27;important&#x27;);
+        dot.style.setProperty(&#x27;margin-right&#x27;, &#x27;auto&#x27;, &#x27;important&#x27;);
+      });
       var prios = sec.querySelectorAll(&#x27;.prioridade-select&#x27;);
-      Array.prototype.forEach.call(prios, function(el){ el.style.setProperty(&#x27;width&#x27;, &#x27;110px&#x27;, &#x27;important&#x27;); });
+      Array.prototype.forEach.call(prios, function(el){ el.style.setProperty(&#x27;width&#x27;, &#x27;78px&#x27;, &#x27;important&#x27;); });
     }
   }
 
@@ -11104,6 +11289,39 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     width: auto !important;
   }
 
+
+
+  /* V103: coluna PRAZO centralizada de verdade no desktop */
+  @media (min-width: 701px) {
+    #section-operacional .operacional-table th.op-atraso,
+    #section-operacional .operacional-table td.op-atraso {
+      width: 50px !important;
+      min-width: 50px !important;
+      max-width: 50px !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+    }
+    #section-operacional .operacional-table td.op-atraso .op-prazo-dot {
+      display: block !important;
+      margin: 0 auto !important;
+      position: relative !important;
+      left: auto !important;
+      right: auto !important;
+      transform: none !important;
+    }
+    #section-operacional .operacional-table .op-acao {
+      width: 190px !important;
+      min-width: 190px !important;
+      max-width: 190px !important;
+    }
+    #section-operacional .operacional-table .op-melhoria {
+      width: 180px !important;
+      min-width: 180px !important;
+      max-width: 180px !important;
+    }
+  }
 &lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
