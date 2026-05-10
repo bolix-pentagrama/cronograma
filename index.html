@@ -1812,6 +1812,91 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
       max-width: 180px !important;
     }
   }
+
+
+  /* V104: ajustes exclusivos mobile Agenda Operacional (filtros e cards) */
+  @media (max-width: 700px) {
+    #section-operacional .operacional-toolbar {
+      display: grid !important;
+      grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+      gap: 10px 12px !important;
+      align-items: end !important;
+    }
+    #section-operacional .operacional-toolbar .filter-box,
+    #section-operacional .operacional-toolbar .operacional-filter-actions {
+      width: auto !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      flex: initial !important;
+    }
+    #section-operacional .operacional-toolbar .filter-box:nth-child(1) { grid-column: 1 / -1 !important; }
+    #section-operacional .operacional-toolbar .filter-box:nth-child(2) { grid-column: 1 / 4 !important; }
+    #section-operacional .operacional-toolbar .filter-box:nth-child(3) { grid-column: 4 / 7 !important; }
+    #section-operacional .operacional-toolbar .filter-box:nth-child(4) { grid-column: 1 / 4 !important; }
+    #section-operacional .operacional-toolbar .filter-box:nth-child(5) { grid-column: 4 / 7 !important; }
+    #section-operacional .operacional-toolbar .filter-box:nth-child(6) { grid-column: 1 / 4 !important; }
+    #section-operacional .operacional-toolbar .filter-box:nth-child(7) { grid-column: 4 / 7 !important; }
+    #section-operacional .operacional-toolbar .filter-box:nth-child(8) { grid-column: 1 / 3 !important; }
+    #section-operacional .operacional-toolbar .filter-box:nth-child(9) { grid-column: 3 / 5 !important; }
+    #section-operacional .operacional-toolbar .filter-box:nth-child(10) { grid-column: 5 / 7 !important; }
+    #section-operacional .operacional-toolbar .operacional-filter-actions { grid-column: 1 / -1 !important; }
+    #section-operacional .operacional-toolbar input,
+    #section-operacional .operacional-toolbar select,
+    #section-operacional .op-clear-filters-btn {
+      width: 100% !important;
+      max-width: none !important;
+      min-width: 0 !important;
+    }
+
+    #section-operacional .operacional-table tbody tr {
+      display: grid !important;
+      grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+      gap: 8px 12px !important;
+      align-items: start !important;
+    }
+    #section-operacional .operacional-table tbody td {
+      width: auto !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    #section-operacional .operacional-table .op-data { grid-column: 1 / 4 !important; }
+    #section-operacional .operacional-table .op-previsao { grid-column: 4 / 7 !important; }
+    #section-operacional .operacional-table .op-unidade { grid-column: 1 / 4 !important; }
+    #section-operacional .operacional-table .op-area { grid-column: 4 / 7 !important; }
+    #section-operacional .operacional-table .op-pilar { grid-column: 1 / 4 !important; }
+    #section-operacional .operacional-table .op-quem { grid-column: 4 / 7 !important; }
+    #section-operacional .operacional-table .op-acao { grid-column: 1 / -1 !important; }
+    #section-operacional .operacional-table .op-melhoria { grid-column: 1 / -1 !important; }
+    #section-operacional .operacional-table .op-status { grid-column: 1 / 3 !important; }
+    #section-operacional .operacional-table .op-prioridade { grid-column: 3 / 5 !important; }
+    #section-operacional .operacional-table .op-atraso { grid-column: 5 / 7 !important; }
+
+    #section-operacional .operacional-table .op-previsao {
+      display: block !important;
+      font-family: var(--font-mono) !important;
+      color: #e8f0fe !important;
+      font-weight: 800 !important;
+    }
+    #section-operacional .operacional-table .op-atraso {
+      display: block !important;
+      text-align: left !important;
+      color: #e8f0fe !important;
+    }
+    #section-operacional .operacional-table .op-atraso .op-prazo-dot {
+      margin: 4px 0 0 0 !important;
+      display: block !important;
+    }
+    #section-operacional .operacional-table .op-status .op-chip,
+    #section-operacional .operacional-table .op-prioridade .prioridade-select {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      text-align: center !important;
+      justify-content: center !important;
+    }
+  }
 &lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
@@ -9432,8 +9517,34 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     var sec = document.getElementById(&#x27;section-operacional&#x27;);
     if (!sec) return;
 
+    var isMobileOp = window.matchMedia && window.matchMedia('(-webkit-max-device-pixel-ratio: 1000) and (max-width: 700px)').matches || window.innerWidth <= 700;
     var toolbar = sec.querySelector(&#x27;.operacional-toolbar&#x27;);
-    if (toolbar) {
+    if (toolbar && isMobileOp) {
+      toolbar.style.setProperty(&#x27;display&#x27;, &#x27;grid&#x27;, &#x27;important&#x27;);
+      toolbar.style.setProperty(&#x27;grid-template-columns&#x27;, &#x27;repeat(6, minmax(0, 1fr))&#x27;, &#x27;important&#x27;);
+      toolbar.style.setProperty(&#x27;gap&#x27;, &#x27;10px 12px&#x27;, &#x27;important&#x27;);
+      toolbar.style.setProperty(&#x27;align-items&#x27;, &#x27;end&#x27;, &#x27;important&#x27;);
+      Array.prototype.forEach.call(toolbar.querySelectorAll(&#x27;.filter-box, .operacional-filter-actions&#x27;), function(box, idx) {
+        box.style.removeProperty(&#x27;flex&#x27;);
+        box.style.setProperty(&#x27;width&#x27;, &#x27;auto&#x27;, &#x27;important&#x27;);
+        box.style.setProperty(&#x27;min-width&#x27;, &#x27;0&#x27;, &#x27;important&#x27;);
+        box.style.setProperty(&#x27;max-width&#x27;, &#x27;none&#x27;, &#x27;important&#x27;);
+        var spans = [[1,7],[1,4],[4,7],[1,4],[4,7],[1,4],[4,7],[1,3],[3,5],[5,7],[1,7]];
+        var sp = spans[idx] || [1,7];
+        box.style.setProperty(&#x27;grid-column&#x27;, sp[0] + &#x27; / &#x27; + sp[1], &#x27;important&#x27;);
+      });
+      Array.prototype.forEach.call(toolbar.querySelectorAll(&#x27;input, select&#x27;), function(el) {
+        el.style.setProperty(&#x27;width&#x27;, &#x27;100%&#x27;, &#x27;important&#x27;);
+        el.style.setProperty(&#x27;max-width&#x27;, &#x27;none&#x27;, &#x27;important&#x27;);
+      });
+      var clearBtnM = sec.querySelector(&#x27;.op-clear-filters-btn&#x27;);
+      if (clearBtnM) {
+        clearBtnM.style.setProperty(&#x27;width&#x27;, &#x27;100%&#x27;, &#x27;important&#x27;);
+        clearBtnM.style.setProperty(&#x27;max-width&#x27;, &#x27;none&#x27;, &#x27;important&#x27;);
+      }
+    }
+
+    if (toolbar && !isMobileOp) {
       toolbar.style.setProperty(&#x27;display&#x27;, &#x27;flex&#x27;, &#x27;important&#x27;);
       toolbar.style.setProperty(&#x27;flex-wrap&#x27;, &#x27;wrap&#x27;, &#x27;important&#x27;);
       toolbar.style.setProperty(&#x27;align-items&#x27;, &#x27;flex-end&#x27;, &#x27;important&#x27;);
@@ -9454,6 +9565,40 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     }
 
     var table = sec.querySelector(&#x27;.operacional-table&#x27;);
+    if (table && isMobileOp) {
+      table.style.setProperty(&#x27;width&#x27;, &#x27;100%&#x27;, &#x27;important&#x27;);
+      table.style.setProperty(&#x27;min-width&#x27;, &#x27;0&#x27;, &#x27;important&#x27;);
+      table.style.setProperty(&#x27;table-layout&#x27;, &#x27;auto&#x27;, &#x27;important&#x27;);
+      Array.prototype.forEach.call(table.querySelectorAll(&#x27;tbody tr&#x27;), function(row){
+        row.style.setProperty(&#x27;display&#x27;, &#x27;grid&#x27;, &#x27;important&#x27;);
+        row.style.setProperty(&#x27;grid-template-columns&#x27;, &#x27;repeat(6, minmax(0, 1fr))&#x27;, &#x27;important&#x27;);
+        row.style.setProperty(&#x27;gap&#x27;, &#x27;8px 12px&#x27;, &#x27;important&#x27;);
+      });
+      var gridMap = {
+        &#x27;op-data&#x27;: &#x27;1 / 4&#x27;, &#x27;op-previsao&#x27;: &#x27;4 / 7&#x27;, &#x27;op-unidade&#x27;: &#x27;1 / 4&#x27;, &#x27;op-area&#x27;: &#x27;4 / 7&#x27;,
+        &#x27;op-pilar&#x27;: &#x27;1 / 4&#x27;, &#x27;op-quem&#x27;: &#x27;4 / 7&#x27;, &#x27;op-acao&#x27;: &#x27;1 / 7&#x27;, &#x27;op-melhoria&#x27;: &#x27;1 / 7&#x27;,
+        &#x27;op-status&#x27;: &#x27;1 / 3&#x27;, &#x27;op-prioridade&#x27;: &#x27;3 / 5&#x27;, &#x27;op-atraso&#x27;: &#x27;5 / 7&#x27;
+      };
+      Object.keys(gridMap).forEach(function(cls){
+        Array.prototype.forEach.call(table.querySelectorAll(&#x27;.&#x27;+cls), function(cell){
+          cell.style.setProperty(&#x27;width&#x27;, &#x27;auto&#x27;, &#x27;important&#x27;);
+          cell.style.setProperty(&#x27;min-width&#x27;, &#x27;0&#x27;, &#x27;important&#x27;);
+          cell.style.setProperty(&#x27;max-width&#x27;, &#x27;none&#x27;, &#x27;important&#x27;);
+          cell.style.setProperty(&#x27;grid-column&#x27;, gridMap[cls], &#x27;important&#x27;);
+          cell.style.setProperty(&#x27;padding&#x27;, &#x27;0&#x27;, &#x27;important&#x27;);
+        });
+      });
+      Array.prototype.forEach.call(table.querySelectorAll(&#x27;.op-data, .op-previsao&#x27;), function(cell){
+        cell.style.setProperty(&#x27;font-weight&#x27;, &#x27;800&#x27;, &#x27;important&#x27;);
+        cell.style.setProperty(&#x27;color&#x27;, &#x27;#e8f0fe&#x27;, &#x27;important&#x27;);
+        cell.style.setProperty(&#x27;font-family&#x27;, &#x27;var(--font-mono)&#x27;, &#x27;important&#x27;);
+      });
+      Array.prototype.forEach.call(table.querySelectorAll(&#x27;td.op-atraso .op-prazo-dot&#x27;), function(dot) {
+        dot.style.setProperty(&#x27;display&#x27;, &#x27;block&#x27;, &#x27;important&#x27;);
+        dot.style.setProperty(&#x27;margin&#x27;, &#x27;4px 0 0 0&#x27;, &#x27;important&#x27;);
+      });
+      return;
+    }
     if (table) {
       table.style.setProperty(&#x27;min-width&#x27;, &#x27;0&#x27;, &#x27;important&#x27;);
       table.style.setProperty(&#x27;width&#x27;, &#x27;100%&#x27;, &#x27;important&#x27;);
