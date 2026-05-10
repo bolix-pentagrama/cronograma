@@ -212,6 +212,40 @@
       max-width: 180px !important;
     }
   }
+
+
+  /* V105 correto — mobile status maior + prazo concluído como '-' */
+  .op-prazo-dash {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 15px !important;
+    height: 15px !important;
+    color: #cdd9ee !important;
+    font-family: var(--font-mono) !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+  }
+  @media (max-width: 700px) {
+    #section-operacional .operacional-table .op-status { grid-column: 1 / 4 !important; }
+    #section-operacional .operacional-table .op-prioridade { grid-column: 4 / 6 !important; }
+    #section-operacional .operacional-table .op-atraso { grid-column: 6 / 7 !important; }
+    #section-operacional .operacional-table .op-status .op-chip {
+      width: 100% !important; min-width: 0 !important; max-width: 100% !important;
+      padding-left: 6px !important; padding-right: 6px !important;
+      font-size: 9px !important; justify-content: center !important; text-align: center !important; white-space: normal !important;
+    }
+    #section-operacional .operacional-table .op-prioridade .prioridade-select {
+      width: 100% !important; min-width: 0 !important; max-width: 100% !important;
+      padding-left: 6px !important; padding-right: 20px !important;
+      font-size: 9px !important; text-align: center !important;
+    }
+    #section-operacional .operacional-table .op-atraso .op-prazo-dot,
+    #section-operacional .operacional-table .op-atraso .op-prazo-dash {
+      margin: 4px 0 0 0 !important; display: inline-flex !important;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -9426,7 +9460,9 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     if (s === 'terceiro') return 'op-quem-terceiro';
     return 'op-quem-vazio';
   }
-  function operacionalPrazoTipo(previsaoISO) {
+  function operacionalPrazoTipo(previsaoISO, status) {
+    const st = normalizarTextoFiltro(status || '');
+    if (st.includes('concluida') && !st.includes('nao concluida')) return '-';
     if (!previsaoISO) return 'No prazo';
     const hoje = new Date();
     hoje.setHours(0,0,0,0);
@@ -9437,11 +9473,16 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     if (dias <= 3) return 'Próximo';
     return 'No prazo';
   }
-  function operacionalPrazoClass(previsaoISO) {
-    const tipo = operacionalPrazoTipo(previsaoISO);
+  function operacionalPrazoClass(previsaoISO, status) {
+    const tipo = operacionalPrazoTipo(previsaoISO, status);
     if (tipo === 'Atrasado') return 'op-prazo-vermelho';
     if (tipo === 'Próximo') return 'op-prazo-amarelo';
     return 'op-prazo-verde';
+  }
+  function operacionalPrazoHtml(item) {
+    const tipo = operacionalPrazoTipo(item.previsaoISO, item.status);
+    if (tipo === '-') return '&lt;span class=&quot;op-prazo-dash&quot; title=&quot;Concluída&quot;&gt;-&lt;/span&gt;';
+    return '&lt;span class=&quot;op-prazo-dot ' + operacionalPrazoClass(item.previsaoISO, item.status) + '&quot; title=&quot;' + tipo + '&quot;&gt;&lt;/span&gt;';
   }
   function aoMudarPrioridade(mid, el) {
     try { localStorage.setItem(FIELD_KEY_PREFIX + mid + &#x27;.prioridade&#x27;, el.value); } catch(e) {}
@@ -9478,9 +9519,9 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
       if (fQuem &amp;&amp; item.quem !== fQuem) return false;
       if (fStatus &amp;&amp; item.status !== fStatus) return false;
       if (fPrioridade &amp;&amp; item.prioridade !== fPrioridade) return false;
-      if (fPrazo &amp;&amp; operacionalPrazoTipo(item.previsaoISO) !== fPrazo) return false;
+      if (fPrazo &amp;&amp; operacionalPrazoTipo(item.previsaoISO, item.status) !== fPrazo) return false;
       if (text) {
-        const hay = normalizarTextoFiltro([item.data, item.previsao, item.unidade, item.area, item.pilar, item.quem, item.acao, item.melhoria, item.status, item.prioridade, operacionalPrazoTipo(item.previsaoISO)].join(&#x27; &#x27;));
+        const hay = normalizarTextoFiltro([item.data, item.previsao, item.unidade, item.area, item.pilar, item.quem, item.acao, item.melhoria, item.status, item.prioridade, operacionalPrazoTipo(item.previsaoISO, item.status)].join(&#x27; &#x27;));
         if (!hay.includes(text)) return false;
       }
       return true;
@@ -9503,7 +9544,7 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
         &lt;td class=&quot;op-melhoria&quot;&gt;${escapeHtml(item.melhoria)}&lt;/td&gt;
         &lt;td class=&quot;op-status&quot;&gt;&lt;span class=&quot;op-chip op-status-chip ${operacionalStatusClass(item.status)}&quot;&gt;${escapeHtml(item.status || &#x27;—&#x27;)}&lt;/span&gt;&lt;/td&gt;
         &lt;td class=&quot;op-prioridade&quot;&gt;&lt;select class=&quot;prioridade-select ${pCls}&quot; onchange=&quot;aoMudarPrioridade(&#x27;${escapeHtml(item.mid)}&#x27;, this)&quot;&gt;${buildPrioridadeOptions(item.prioridade)}&lt;/select&gt;&lt;/td&gt;
-        &lt;td class=&quot;op-atraso&quot;&gt;&lt;span class=&quot;op-prazo-dot ${operacionalPrazoClass(item.previsaoISO)}&quot; title=&quot;${operacionalPrazoTipo(item.previsaoISO)}&quot;&gt;&lt;/span&gt;&lt;/td&gt;
+        &lt;td class=&quot;op-atraso&quot;&gt;${operacionalPrazoHtml(item)}&lt;/td&gt;
       &lt;/tr&gt;`;
     }).join(&#x27;&#x27;);
     if (count) count.innerHTML = `&lt;strong&gt;${items.length}&lt;/strong&gt; registro${items.length === 1 ? &#x27;&#x27; : &#x27;s&#x27;} encontrado${items.length === 1 ? &#x27;&#x27; : &#x27;s&#x27;}`;
@@ -9593,9 +9634,19 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
         cell.style.setProperty(&#x27;color&#x27;, &#x27;#e8f0fe&#x27;, &#x27;important&#x27;);
         cell.style.setProperty(&#x27;font-family&#x27;, &#x27;var(--font-mono)&#x27;, &#x27;important&#x27;);
       });
-      Array.prototype.forEach.call(table.querySelectorAll(&#x27;td.op-atraso .op-prazo-dot&#x27;), function(dot) {
-        dot.style.setProperty(&#x27;display&#x27;, &#x27;block&#x27;, &#x27;important&#x27;);
+      Array.prototype.forEach.call(table.querySelectorAll(&#x27;td.op-atraso .op-prazo-dot, td.op-atraso .op-prazo-dash&#x27;), function(dot) {
+        dot.style.setProperty(&#x27;display&#x27;, &#x27;inline-flex&#x27;, &#x27;important&#x27;);
         dot.style.setProperty(&#x27;margin&#x27;, &#x27;4px 0 0 0&#x27;, &#x27;important&#x27;);
+      });
+      Array.prototype.forEach.call(table.querySelectorAll(&#x27;.op-status .op-chip&#x27;), function(el){
+        el.style.setProperty(&#x27;width&#x27;,&#x27;100%&#x27;,&#x27;important&#x27;);
+        el.style.setProperty(&#x27;font-size&#x27;,&#x27;9px&#x27;,&#x27;important&#x27;);
+        el.style.setProperty(&#x27;padding-left&#x27;,&#x27;6px&#x27;,&#x27;important&#x27;);
+        el.style.setProperty(&#x27;padding-right&#x27;,&#x27;6px&#x27;,&#x27;important&#x27;);
+      });
+      Array.prototype.forEach.call(table.querySelectorAll(&#x27;.op-prioridade .prioridade-select&#x27;), function(el){
+        el.style.setProperty(&#x27;width&#x27;,&#x27;100%&#x27;,&#x27;important&#x27;);
+        el.style.setProperty(&#x27;font-size&#x27;,&#x27;9px&#x27;,&#x27;important&#x27;);
       });
       return;
     }
@@ -14961,6 +15012,46 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     opts.forEach(v => { const o=sel.ownerDocument.createElement('option'); o.value=v; o.textContent=v || '—'; sel.appendChild(o); });
     setValue(sel, current && current !== 'Pendente' && current !== 'Cancelado' ? current : (current === 'Cancelado' ? 'Não concluída' : 'Não iniciada'));
   }
+
+  const CRON_FIELD_KEY_PREFIX = 'reset.field.v1.';
+  function cronMid(unidade, idac, idm){
+    return (String(unidade || '') + '-' + String(idac || '') + '-' + String(idm || '')).replace(/[^a-zA-Z0-9_-]/g,'-');
+  }
+  function getSavedCronField(mid, field, fallback){
+    try {
+      const v = localStorage.getItem(CRON_FIELD_KEY_PREFIX + mid + '.' + field);
+      if (v != null && v !== '') return v;
+    } catch(e) {}
+    return fallback;
+  }
+  function syncAcoesDatasFromCronograma(){
+    try {
+      document.querySelectorAll('#pane-acoes iframe.reset-frame').forEach(function(frame){
+        const doc = getDoc(frame);
+        if (!doc) return;
+        doc.querySelectorAll('tr.melhoria-item[data-cron-mid]').forEach(function(row){
+          const mid = row.getAttribute('data-cron-mid');
+          if (!mid) return;
+          const n = String(row.getAttribute('data-melhoria-row') || '').padStart(2,'0');
+          const inicio = getSavedCronField(mid, 'inicio', '');
+          const prazo = getSavedCronField(mid, 'prazo', '');
+          const previsao = getSavedCronField(mid, 'previsao', '');
+          const status = getSavedCronField(mid, 'status', '');
+          const inicioEl = doc.getElementById('m' + n + '_inicio');
+          const prazoEl = doc.getElementById('m' + n + '_prazo');
+          const previsaoEl = doc.getElementById('m' + n + '_previsao');
+          const statusEl = doc.getElementById('m' + n + '_status');
+          if (inicioEl && inicio && inicioEl.value !== toISO(inicio)) setValue(inicioEl, toISO(inicio));
+          if (prazoEl && prazo && String(prazoEl.value) !== String(prazo)) setValue(prazoEl, String(prazo).replace(/[^0-9]/g,''));
+          if (previsaoEl && previsao && previsaoEl.value !== toISO(previsao)) setValue(previsaoEl, toISO(previsao));
+          if (statusEl && status) { normalizeStatusSelect(statusEl); if ((statusEl.value || '') !== status) setValue(statusEl, status); }
+        });
+        try { if (doc.defaultView && typeof doc.defaultView.calcMelhoriasPro === 'function') doc.defaultView.calcMelhoriasPro(); } catch(e){}
+      });
+    } catch(e) {}
+  }
+  window.syncAcoesDatasFromCronograma = syncAcoesDatasFromCronograma;
+
   function fillFrame(frame, payload){
     const doc = getDoc(frame); if (!doc) return;
     try { injectActionFrameFormatting(frame); } catch(e){}
@@ -14988,15 +15079,18 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     payload.melhorias.forEach((m, idx) => {
       const n=String(idx+1).padStart(2,'0');
       const row = doc.querySelectorAll('tr.melhoria-item')[idx];
+      const mid = m.cronMid || cronMid(payload.unidade, payload.idac, m.idm || ('M'+n));
+      if (row) row.setAttribute('data-cron-mid', mid);
       if (row && row.children[0]) row.children[0].textContent = m.idm || ('M'+n);
       setValue(doc.getElementById('m'+n+'_desc'), m.desc || '');
-      setValue(doc.getElementById('m'+n+'_inicio'), toISO(m.inicio));
-      setValue(doc.getElementById('m'+n+'_prazo'), m.prazo == null ? '' : String(m.prazo));
-      setValue(doc.getElementById('m'+n+'_previsao'), toISO(m.previsao));
+      setValue(doc.getElementById('m'+n+'_inicio'), toISO(getSavedCronField(mid, 'inicio', m.inicio)));
+      setValue(doc.getElementById('m'+n+'_prazo'), getSavedCronField(mid, 'prazo', m.prazo == null ? '' : String(m.prazo)).toString().replace(/[^0-9]/g,''));
+      setValue(doc.getElementById('m'+n+'_previsao'), toISO(getSavedCronField(mid, 'previsao', m.previsao)));
       setValue(doc.getElementById('m'+n+'_conclusao'), toISO(m.conclusao));
-      const st=doc.getElementById('m'+n+'_status'); normalizeStatusSelect(st); setValue(st, m.status || 'Não iniciada');
+      const st=doc.getElementById('m'+n+'_status'); normalizeStatusSelect(st); setValue(st, getSavedCronField(mid, 'status', m.status || 'Não iniciada'));
     });
     try { if (doc.defaultView && typeof doc.defaultView.calcMelhoriasPro === 'function') doc.defaultView.calcMelhoriasPro(); } catch(e){}
+    try { syncAcoesDatasFromCronograma(); } catch(e){}
     try { injectDeleteButtonIntoSavedFrame(frame); } catch(e){}
     try { parentLockSavedFrame(frame); } catch(e){}
     try { resizeFrames(); } catch(e){}
@@ -15079,15 +15173,19 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
           idac: idac,
           titulo: stripActionTitle(action.nome || action.titulo || '', idac) || 'Nova ação',
           status: action.status || 'Não iniciada',
-          melhorias: (action.melhorias || []).map(m => ({
-            idm:m.idm,
-            desc:m.desc,
-            inicio:m.inicio || '',
-            prazo:m.prazo || '',
-            previsao:m.previsao || '',
-            conclusao:m.conclusao || '',
-            status:m.status || 'Não iniciada'
-          }))
+          melhorias: (action.melhorias || []).map(m => {
+            const mid = cronMid(unidade, idac, m.idm);
+            return {
+              idm:m.idm,
+              cronMid: mid,
+              desc:m.desc,
+              inicio:getSavedCronField(mid, 'inicio', m.inicio || ''),
+              prazo:getSavedCronField(mid, 'prazo', m.prazo || ''),
+              previsao:getSavedCronField(mid, 'previsao', m.previsao || ''),
+              conclusao:m.conclusao || '',
+              status:getSavedCronField(mid, 'status', m.status || 'Não iniciada')
+            };
+          })
         };
         createMigratedAction(payload);
       });
@@ -15097,7 +15195,7 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     try { resizeFrames(); } catch(e){}
   }
   window.__resetRunMigracaoCronogramaAcoes = function(){ window.__resetMigracaoCronogramaAcoesV20 = false; migrate(); };
-  window.addEventListener('load', function(){ setTimeout(migrate,600); setTimeout(migrate,1500); setTimeout(migrate,3000); setTimeout(migrate,5500); });
+  window.addEventListener('load', function(){ setTimeout(migrate,600); setTimeout(migrate,1500); setTimeout(migrate,3000); setTimeout(migrate,5500); setInterval(syncAcoesDatasFromCronograma, 1200); });
   const cf=document.getElementById('frame-cronograma'); if (cf) cf.addEventListener('load', function(){ setTimeout(migrate,300); setTimeout(migrate,1200); });
 })();
 </script>
