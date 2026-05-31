@@ -3181,12 +3181,28 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
       &lt;div style=&quot;display:flex;gap:8px;align-items:center;flex-wrap:wrap&quot;&gt;
         &lt;input class=&quot;p2-filter&quot; id=&quot;p2-filter&quot; oninput=&quot;p2Render()&quot; placeholder=&quot;Buscar por ação, melhoria ou projeto&quot; type=&quot;search&quot;/&gt;
         &lt;button class=&quot;btn primary&quot; onclick=&quot;p2ModalAbrir()&quot; type=&quot;button&quot;&gt;+ Incluir Projeto&lt;/button&gt;
+        &lt;button class=&quot;btn&quot; onclick=&quot;p2AplicacaoAbrir()&quot; type=&quot;button&quot;&gt;+ Incluir Aplicação&lt;/button&gt;
         &lt;button class=&quot;btn&quot; onclick=&quot;p2Limpar()&quot; type=&quot;button&quot;&gt;🧹 Limpar projetos&lt;/button&gt;
       &lt;/div&gt;
     &lt;/div&gt;
     &lt;div id=&quot;p2-host&quot;&gt;&lt;/div&gt;
   &lt;/div&gt;
 &lt;/section&gt;
+&lt;div id=&quot;p2-aplic-modal&quot; style=&quot;display:none;position:fixed;inset:0;z-index:50000;background:rgba(3,8,18,.85);backdrop-filter:blur(5px);align-items:flex-start;justify-content:center;padding:20px;padding-top:40px;overflow-y:auto&quot; onclick=&quot;if(event.target===this)p2AplicacaoFechar()&quot;&gt;
+  &lt;div style=&quot;width:min(480px,calc(100vw - 32px));background:linear-gradient(180deg,#0b1628,#060d1a);border:1px solid rgba(168,204,58,.65);border-radius:14px;box-shadow:0 0 28px rgba(168,204,58,.18);padding:24px&quot;&gt;
+    &lt;div style=&quot;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px&quot;&gt;
+      &lt;span style=&quot;font-family:var(--font-mono);font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--brand)&quot;&gt;Incluir Aplicação&lt;/span&gt;
+      &lt;button onclick=&quot;p2AplicacaoFechar()&quot; style=&quot;width:32px;height:32px;border-radius:8px;border:1px solid #2a4268;background:transparent;color:#fff;font-size:20px;cursor:pointer&quot;&gt;&amp;#x00D7;&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;label style=&quot;display:block;font-size:10px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.07em;color:var(--brand);font-weight:800;margin-bottom:6px&quot;&gt;Nome da Aplicação&lt;/label&gt;
+    &lt;input id=&quot;p2-aplic-input&quot; type=&quot;text&quot; placeholder=&quot;Ex.: Bolix - Nova Unidade&quot; style=&quot;width:100%;background:#071225;color:#fff;border:1px solid #2a4268;border-radius:8px;padding:10px 12px;font-size:13px;font-family:var(--font-main);box-sizing:border-box;outline:none&quot; onkeydown=&quot;if(event.key===&#x27;Enter&#x27;)p2AplicacaoSalvar()&quot;/&gt;
+    &lt;div id=&quot;p2-aplic-list&quot; style=&quot;margin-top:16px&quot;&gt;&lt;/div&gt;
+    &lt;div style=&quot;display:flex;justify-content:flex-end;gap:8px;margin-top:18px&quot;&gt;
+      &lt;button class=&quot;btn&quot; onclick=&quot;p2AplicacaoFechar()&quot;&gt;Fechar&lt;/button&gt;
+      &lt;button id=&quot;p2-aplic-btn-add&quot; class=&quot;btn primary&quot; onclick=&quot;p2AplicacaoSalvar()&quot;&gt;Adicionar&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
 
 &lt;div id=&quot;p2-modal&quot; style=&quot;display:none;position:fixed;inset:0;z-index:40000;background:rgba(3,8,18,.85);backdrop-filter:blur(5px);align-items:flex-start;justify-content:center;padding:20px;padding-top:40px;overflow-y:auto&quot; onclick=&quot;if(event.target===this)p2ModalFechar()&quot;&gt;
   &lt;div style=&quot;width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 60px);overflow-y:auto;background:linear-gradient(180deg,#0b1628,#060d1a);border:1px solid rgba(168,204,58,.65);border-radius:14px;box-shadow:0 0 28px rgba(168,204,58,.18),0 24px 80px rgba(0,0,0,.6);padding:24px&quot;&gt;
@@ -11182,7 +11198,103 @@ init();
   }
   function p2Limpar(){if(!confirm(&#x27;Limpar todos os projetos cadastrados?&#x27;))return;salvarProjetosExecucao({});p2Render();}
 
-  // Modal
+  function p2ExcluirAcao(ak){
+    if(!confirm(&#x27;Excluir esta ação e todos os seus projetos? Esta operação não pode ser desfeita.&#x27;))return;
+    var data=carregarProjetosExecucao();
+    Object.keys(data).forEach(function(k){if(k.startsWith(ak+&#x27;__&#x27;))delete data[k];});
+    salvarProjetosExecucao(data);
+    var hidden;try{hidden=JSON.parse(localStorage.getItem(&#x27;reset.p2.hidden.acoes&#x27;)||&#x27;[]&#x27;);}catch(e){hidden=[];}
+    if(hidden.indexOf(ak)<0)hidden.push(ak);
+    try{localStorage.setItem(&#x27;reset.p2.hidden.acoes&#x27;,JSON.stringify(hidden));}catch(e){}
+    p2Render();
+  }
+
+  function p2AplicacaoAbrir(){
+    var el=document.getElementById(&#x27;p2-aplic-modal&#x27;);
+    if(!el)return;
+    el.style.display=&#x27;flex&#x27;;
+    var inp=document.getElementById(&#x27;p2-aplic-input&#x27;);
+    if(inp){inp.value=&#x27;&#x27;;setTimeout(function(){inp.focus();},80);}
+    p2AplicacaoListar();
+  }
+  function p2AplicacaoFechar(){
+    var el=document.getElementById(&#x27;p2-aplic-modal&#x27;);
+    if(el)el.style.display=&#x27;none&#x27;;
+  }
+  var _p2AplicEditIdx=-1;
+  function p2AplicacaoGetLista(){try{var s=localStorage.getItem(&#x27;reset.p2.aplics&#x27;);return s?JSON.parse(s):[&#x27;Todas as Unidades Bolix&#x27;,&#x27;Bolix - Grand Plaza ABC&#x27;,&#x27;Bolix - Pátio Paulista&#x27;,&#x27;Bolix - Interlagos&#x27;,&#x27;Bolix - Guarulhos&#x27;];}catch(e){return[];}}
+  function p2AplicacaoSalvarLista(lst){try{localStorage.setItem(&#x27;reset.p2.aplics&#x27;,JSON.stringify(lst));}catch(e){}}
+  function p2AplicacaoAbrir(){
+    var el=document.getElementById(&#x27;p2-aplic-modal&#x27;);
+    if(!el)return;
+    el.style.display=&#x27;flex&#x27;;
+    p2AplicacaoCancelarEdicao();
+    p2AplicacaoListar();
+    setTimeout(function(){var inp=document.getElementById(&#x27;p2-aplic-input&#x27;);if(inp)inp.focus();},80);
+  }
+  function p2AplicacaoFechar(){
+    var el=document.getElementById(&#x27;p2-aplic-modal&#x27;);
+    if(el)el.style.display=&#x27;none&#x27;;
+    p2AplicacaoCancelarEdicao();
+  }
+  function p2AplicacaoListar(){
+    var el=document.getElementById(&#x27;p2-aplic-list&#x27;);
+    if(!el)return;
+    var lista=p2AplicacaoGetLista();
+    el.innerHTML=&#x27;&lt;p style=&quot;font-size:10px;font-family:var(--font-mono);color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px&quot;&gt;Aplicações cadastradas:&lt;/p&gt;&#x27;
+      +lista.map(function(a,i){return&#x27;&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:6px 10px;background:&#x27;+(_p2AplicEditIdx===i?&#x27;rgba(168,204,58,.08)&#x27;:&#x27;#071225&#x27;)+&#x27;;border:1px solid &#x27;+(_p2AplicEditIdx===i?&#x27;rgba(168,204,58,.4)&#x27;:&#x27;#1e3050&#x27;)+&#x27;;border-radius:6px;margin-bottom:4px&quot;&gt;&#x27;
+        +&#x27;&lt;span style=&quot;color:#fff;font-size:12px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap&quot;&gt;&#x27;+p2esc(a)+&#x27;&lt;/span&gt;&#x27;
+        +&#x27;&lt;button onclick=&quot;p2AplicacaoEditar(&#x27;+i+&#x27;)&quot; style=&quot;background:transparent;border:1px solid rgba(168,204,58,.4);border-radius:4px;color:var(--brand);font-size:11px;cursor:pointer;padding:2px 7px;font-family:var(--font-mono);font-weight:800;white-space:nowrap&quot; title=&quot;Editar&quot;&gt;✎ Editar&lt;/button&gt;&#x27;
+        +&#x27;&lt;button onclick=&quot;p2AplicacaoExcluir(&#x27;+i+&#x27;)&quot; style=&quot;background:transparent;border:none;color:rgba(248,113,113,.7);font-size:16px;cursor:pointer;line-height:1;padding:0 4px&quot; title=&quot;Excluir&quot;&gt;×&lt;/button&gt;&#x27;
+        +&#x27;&lt;/div&gt;&#x27;;}).join(&#x27;&#x27;);
+  }
+  function p2AplicacaoEditar(idx){
+    var lista=p2AplicacaoGetLista();
+    var inp=document.getElementById(&#x27;p2-aplic-input&#x27;);
+    var btn=document.getElementById(&#x27;p2-aplic-btn-add&#x27;);
+    if(!inp)return;
+    inp.value=lista[idx]||&#x27;&#x27;;
+    _p2AplicEditIdx=idx;
+    if(btn)btn.textContent=&#x27;Salvar edição&#x27;;
+    inp.focus();
+    p2AplicacaoListar();
+  }
+  function p2AplicacaoCancelarEdicao(){
+    _p2AplicEditIdx=-1;
+    var inp=document.getElementById(&#x27;p2-aplic-input&#x27;);
+    var btn=document.getElementById(&#x27;p2-aplic-btn-add&#x27;);
+    if(inp)inp.value=&#x27;&#x27;;
+    if(btn)btn.textContent=&#x27;Adicionar&#x27;;
+  }
+  function p2AplicacaoSalvar(){
+    var inp=document.getElementById(&#x27;p2-aplic-input&#x27;);
+    if(!inp)return;
+    var nome=(inp.value||&#x27;&#x27;).trim();
+    if(!nome)return;
+    var lista=p2AplicacaoGetLista();
+    if(_p2AplicEditIdx>=0){
+      lista[_p2AplicEditIdx]=nome;
+      _p2AplicEditIdx=-1;
+      var btn=document.getElementById(&#x27;p2-aplic-btn-add&#x27;);
+      if(btn)btn.textContent=&#x27;Adicionar&#x27;;
+    } else {
+      if(lista.indexOf(nome)>=0){alert(&#x27;Essa aplicação já existe.&#x27;);return;}
+      lista.push(nome);
+    }
+    p2AplicacaoSalvarLista(lista);
+    inp.value=&#x27;&#x27;;
+    p2AplicacaoListar();
+    p2Render();
+  }
+  function p2AplicacaoExcluir(idx){
+    if(!confirm(&#x27;Excluir esta aplicação?&#x27;))return;
+    var lista=p2AplicacaoGetLista();
+    lista.splice(idx,1);
+    p2AplicacaoSalvarLista(lista);
+    p2AplicacaoCancelarEdicao();
+    p2AplicacaoListar();
+    p2Render();
+  }
   function p2ModalAbrir(){
     var el=document.getElementById(&#x27;p2-modal&#x27;);if(!el)return;
     var ac=document.getElementById(&#x27;p2m-acao&#x27;);
@@ -11256,6 +11368,8 @@ init();
         var conc=allP.filter(function(p){return p.feito||(p2sl(p.status).includes(&#x27;concluida&#x27;)&amp;&amp;!p2sl(p.status).includes(&#x27;nao&#x27;));}).length;
         var pct=allP.length?Math.round(conc/allP.length*100):0;
         var busca=p2nr([un,acao.idac||&#x27;&#x27;,acao.nome||&#x27;&#x27;,mels.map(function(m){return(m.idm||&#x27;&#x27;)+&#x27; &#x27;+(m.desc||&#x27;&#x27;);}).join(&#x27; &#x27;),allP.map(function(p){return Object.values(p).join(&#x27; &#x27;);}).join(&#x27; &#x27;)].join(&#x27; &#x27;));
+        var _hk=projetosSlug(un)+&#x27;__&#x27;+projetosSlug(acao.idac||&#x27;&#x27;);var _hidden;try{_hidden=JSON.parse(localStorage.getItem(&#x27;reset.p2.hidden.acoes&#x27;)||&#x27;[]&#x27;);}catch(e){_hidden=[];}
+        if(_hidden.indexOf(_hk)>=0)return;
         if(fi&amp;&amp;!busca.includes(fi))return;
         var exp=P2_EXP.has(ak)||!!fi;
         var car=exp?&#x27;▾&#x27;:&#x27;▸&#x27;;
@@ -11275,7 +11389,7 @@ init();
           return String(acao.prazo||&#x27;&#x27;).replace(&#x27; dias&#x27;,&#x27;&#x27;).trim()||&#x27;—&#x27;;
         })();
         // Aplicação e status da ação (salvos por chave)
-        var P2_APLICS=[&#x27;Todas as Unidades Bolix&#x27;,&#x27;Bolix - Grand Plaza ABC&#x27;,&#x27;Bolix - Pátio Paulista&#x27;,&#x27;Bolix - Interlagos&#x27;,&#x27;Bolix - Guarulhos&#x27;];
+        var P2_APLICS_DEFAULT=[&#x27;Todas as Unidades Bolix&#x27;,&#x27;Bolix - Grand Plaza ABC&#x27;,&#x27;Bolix - Pátio Paulista&#x27;,&#x27;Bolix - Interlagos&#x27;,&#x27;Bolix - Guarulhos&#x27;];var P2_APLICS_EXTRA=(function(){try{return JSON.parse(localStorage.getItem(&#x27;reset.p2.aplics.extra&#x27;)||&#x27;[]&#x27;);}catch(e){return[];}})();var P2_APLICS=P2_APLICS_DEFAULT.concat(P2_APLICS_EXTRA.filter(function(x){return P2_APLICS_DEFAULT.indexOf(x)<0;}));
         var P2_STLIST=[&#x27;Não iniciada&#x27;,&#x27;Em andamento&#x27;,&#x27;Concluída&#x27;,&#x27;Com pendência&#x27;,&#x27;Não concluída&#x27;,&#x27;Pausado&#x27;,&#x27;Cancelado&#x27;];
         var P2_AC_PRIOS=[&#x27;Máxima&#x27;,&#x27;Alta&#x27;,&#x27;Média&#x27;,&#x27;Baixa&#x27;];
         var aplKey=&#x27;reset.p2ac.&#x27;+ak+&#x27;.aplic&#x27;;
@@ -11300,7 +11414,7 @@ init();
           +&#x27;&lt;td class=&quot;p2-dc&quot;&gt;&#x27;+p2esc(dias)+&#x27; D&lt;/td&gt;&#x27;
           +&#x27;&lt;td&gt;&lt;/td&gt;&#x27;
           +&#x27;&lt;td onclick=&quot;event.stopPropagation()&quot; style=&quot;overflow:hidden;text-align:right;padding-right:4px&quot;&gt;&#x27;+selPrioAc+&#x27;&lt;/td&gt;&#x27;
-          +&#x27;&lt;td style=&quot;text-align:right;padding-right:6px&quot;&gt;&lt;span class=&quot;p2-pct&#x27;+(pct===0?&#x27; p2-pct-zero&#x27;:&#x27;&#x27;)+&#x27;&quot;&gt;&#x27;+pct+&#x27;%&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&#x27;;
+          +&#x27;&lt;td style=&quot;text-align:right;padding-right:4px;white-space:nowrap&quot;&gt;&lt;span class=&quot;p2-pct&#x27;+(pct===0?&#x27; p2-pct-zero&#x27;:&#x27;&#x27;)+&#x27;&quot;&gt;&#x27;+pct+&#x27;%&lt;/span&gt;&lt;button onclick=&quot;event.stopPropagation();p2ExcluirAcao(\&#x27;&#x27;+ak+&#x27;\&#x27;)&quot; style=&quot;margin-left:6px;background:transparent;border:none;color:rgba(248,113,113,.5);font-size:15px;font-weight:900;cursor:pointer;vertical-align:middle;line-height:1;padding:0 2px&quot; title=&quot;Excluir ação e projetos&quot;&gt;×&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;&#x27;;
         if(!exp)return;
         mels.forEach(function(m){
           var key=projetoKey(un,acao,m);
