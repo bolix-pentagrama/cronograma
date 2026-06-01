@@ -20745,6 +20745,277 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
 })();
 </script>
 
+
+<script id="v130-limpeza-definitiva-institucional-ac01">
+(function(){
+  'use strict';
+  if (window.__v130LimpezaDefinitivaInstitucionalAC01) return;
+  window.__v130LimpezaDefinitivaInstitucionalAC01 = true;
+
+  var TARGET_AREA = 'MARKETING';
+  var TARGET_PILLAR = 'REDES SOCIAIS';
+  var TARGET_UNIT = 'INSTITUCIONAL';
+
+  function s(v){ return String(v == null ? '' : v).trim(); }
+  function norm(v){
+    return s(v).replace(/^Bolix\s*-\s*/i,'')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-zA-Z0-9]+/g,'').toUpperCase();
+  }
+  function key(v){
+    return s(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  }
+  function isTargetUnit(v){ return norm(v) === norm(TARGET_UNIT); }
+  function isTargetCtx(area,pillar,unit){
+    return norm(area) === norm(TARGET_AREA) && norm(pillar) === norm(TARGET_PILLAR) && isTargetUnit(unit);
+  }
+  function codeNum(ac){
+    var m = s(ac).toUpperCase().match(/AC[-\s]?(\d+)/);
+    return m ? parseInt(m[1],10) || 0 : 0;
+  }
+  function formatAC(n){ return 'AC-' + String(Math.max(1,n)).padStart(2,'0'); }
+
+  function cleanArray(arr, unitName){
+    if (!Array.isArray(arr)) return arr;
+    return arr.filter(function(a){
+      if (!a || typeof a !== 'object') return true;
+      var u = a.unidade || a.unit || a.aplicacao || unitName || '';
+      var area = a.area || a.areaAcao || a.area_acao || '';
+      var pillar = a.pillar || a.pilar || '';
+      // Para este saneamento, INSTITUCIONAL será eliminado por completo, pois o usuário confirmou que não há dado válido nela.
+      if (isTargetUnit(u)) return false;
+      if (isTargetCtx(area,pillar,u)) return false;
+      return true;
+    });
+  }
+
+  function cleanLocalStorage(){
+    try {
+      ['reset.units_data','reset_units_data'].forEach(function(k){
+        var raw = localStorage.getItem(k); if (!raw) return;
+        var data; try { data = JSON.parse(raw); } catch(e){ return; }
+        if (!data || typeof data !== 'object') return;
+        Object.keys(data).forEach(function(unitName){
+          if (isTargetUnit(unitName)) delete data[unitName];
+          else data[unitName] = cleanArray(data[unitName], unitName);
+        });
+        localStorage.setItem(k, JSON.stringify(data));
+      });
+    } catch(e) {}
+
+    try {
+      ['reset.projetosExecucao.v1','reset.projetos_execucao','projetosExecucao'].forEach(function(pk){
+        var raw = localStorage.getItem(pk); if (!raw) return;
+        var data; try { data = JSON.parse(raw); } catch(e){ return; }
+        if (!data || typeof data !== 'object') return;
+        if (Array.isArray(data)) {
+          data = data.filter(function(item){ return !isTargetUnit(item && (item.unidade || item.aplicacao || item.unit || '')); });
+        } else {
+          Object.keys(data).forEach(function(k){
+            var item = data[k];
+            var remove = norm(k).indexOf(norm(TARGET_UNIT)) >= 0 || isTargetUnit(item && (item.unidade || item.aplicacao || item.unit || ''));
+            if (remove) delete data[k];
+          });
+        }
+        localStorage.setItem(pk, JSON.stringify(data));
+      });
+    } catch(e) {}
+
+    try {
+      ['bolix_sgmo_integrado','reset.agendaOperacional','reset.agenda_operacional'].forEach(function(pk){
+        var raw = localStorage.getItem(pk); if (!raw) return;
+        var data; try { data = JSON.parse(raw); } catch(e){ return; }
+        if (Array.isArray(data)) data = data.filter(function(item){ return !isTargetUnit(item && (item.unidade || item.aplicacao || item.unit || '')); });
+        localStorage.setItem(pk, JSON.stringify(data));
+      });
+    } catch(e) {}
+
+    try {
+      var rm=[];
+      for (var i=0;i<localStorage.length;i++){
+        var k=localStorage.key(i)||'';
+        if (norm(k).indexOf(norm(TARGET_UNIT)) >= 0) rm.push(k);
+      }
+      rm.forEach(function(k){ localStorage.removeItem(k); });
+    } catch(e) {}
+  }
+
+  function cleanParentActionTree(){
+    try {
+      var ak = key(TARGET_AREA), pk = key(TARGET_PILLAR), uk = key(TARGET_UNIT);
+      if (window.actionAreas && actionAreas[ak] && actionAreas[ak].pillars && actionAreas[ak].pillars[pk]) {
+        var p = actionAreas[ak].pillars[pk];
+        if (p.units) delete p.units[uk];
+        if (p.units && !Object.keys(p.units).length) delete actionAreas[ak].pillars[pk];
+        if (actionAreas[ak].pillars && !Object.keys(actionAreas[ak].pillars).length) delete actionAreas[ak];
+      }
+    } catch(e) {}
+
+    try {
+      document.querySelectorAll('#pillar-subtabs-host .reset-action-tab').forEach(function(tab){
+        var u = tab.dataset.unitKey || '';
+        if (!isTargetUnit(u)) return;
+        var idx = tab.dataset.actionIndex || '';
+        if (idx) document.querySelectorAll('#pane-acoes iframe.reset-frame[data-action-index="' + (window.CSS&&CSS.escape?CSS.escape(idx):idx) + '"]').forEach(function(fr){ fr.remove(); });
+        tab.remove();
+      });
+      document.querySelectorAll('#pillar-subtabs-host .reset-action-subtabs, #pillar-subtabs-host .reset-unit-subtabs, #pillar-subtabs-host .reset-unit-tab').forEach(function(el){
+        if (isTargetUnit(el.dataset && el.dataset.unitKey)) el.remove();
+      });
+      document.querySelectorAll('#pane-acoes iframe.reset-frame').forEach(function(fr){
+        if (fr.id !== 'frame-acoes' && isTargetUnit(fr.dataset && fr.dataset.unitName)) fr.remove();
+      });
+    } catch(e) {}
+
+    try {
+      document.querySelectorAll('#pillar-subtabs-host .reset-action-subtabs').forEach(function(nav){
+        if (!nav.querySelector('.reset-action-tab')) {
+          var area=nav.dataset.areaKey||'', pillar=nav.dataset.pillarKey||'', unit=nav.dataset.unitKey||'';
+          nav.remove();
+          document.querySelectorAll('#pillar-subtabs-host .reset-unit-tab').forEach(function(t){ if((t.dataset.areaKey||'')===area && (t.dataset.pillarKey||'')===pillar && (t.dataset.unitKey||'')===unit) t.remove(); });
+        }
+      });
+      document.querySelectorAll('#pillar-subtabs-host .reset-unit-subtabs').forEach(function(nav){
+        if (!nav.querySelector('.reset-unit-tab')) {
+          var area=nav.dataset.areaKey||'', pillar=nav.dataset.pillarKey||'';
+          nav.remove();
+          document.querySelectorAll('#pillar-subtabs-host .reset-pillar-tab').forEach(function(t){ if((t.dataset.areaKey||'')===area && (t.dataset.pillarKey||'')===pillar) t.remove(); });
+        }
+      });
+      document.querySelectorAll('#pillar-subtabs-host .reset-pillar-subtabs').forEach(function(nav){
+        if (!nav.querySelector('.reset-pillar-tab')) {
+          var area=nav.dataset.areaKey||'';
+          nav.remove();
+          document.querySelectorAll('#acoes-subtabs-wrap .reset-subtabs > .reset-subtab.saved-action').forEach(function(t){ if((t.dataset.areaKey||'')===area) t.remove(); });
+        }
+      });
+    } catch(e) {}
+  }
+
+  function cleanCronograma(){
+    var fr = document.getElementById('frame-cronograma');
+    var w = fr && fr.contentWindow;
+    if (!w) return false;
+    try {
+      w.eval("(function(){\n"+
+        "function s(v){return String(v==null?'':v).trim()}\n"+
+        "function norm(v){return s(v).replace(/^Bolix\\s*-\\s*/i,'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'').toUpperCase()}\n"+
+        "var TU='"+TARGET_UNIT.replace(/'/g,"\\'")+"';\n"+
+        "function isU(v){return norm(v)===norm(TU)}\n"+
+        "function cleanArr(arr,un){return Array.isArray(arr)?arr.filter(function(a){var u=(a&&(a.unidade||a.unit||a.aplicacao))||un||''; return !isU(u);}):arr}\n"+
+        "try{ if(typeof UNITS_DATA!=='undefined'){ Object.keys(UNITS_DATA).forEach(function(u){ if(isU(u)){delete UNITS_DATA[u];} else {UNITS_DATA[u]=cleanArr(UNITS_DATA[u],u);} }); }}catch(e){}\n"+
+        "try{ if(typeof unitMap!=='undefined'){ Object.keys(unitMap).forEach(function(u){ if(isU(u)) delete unitMap[u]; }); }}catch(e){}\n"+
+        "try{localStorage.setItem('reset.units_data',JSON.stringify(UNITS_DATA||{}));}catch(e){}\n"+
+        "try{localStorage.setItem('reset_units_data',JSON.stringify(UNITS_DATA||{}));}catch(e){}\n"+
+        "try{ if(typeof salvarUnitsData==='function') salvarUnitsData(); }catch(e){}\n"+
+        "try{ if(typeof renderUnitButtons==='function') renderUnitButtons(); }catch(e){}\n"+
+        "try{ if(typeof atualizarResumoGeral==='function') atualizarResumoGeral(); }catch(e){}\n"+
+        "try{ if(typeof atualizarTodasStats==='function') atualizarTodasStats(); }catch(e){}\n"+
+        "try{ if(typeof renderProjetosExecucao==='function') renderProjetosExecucao(); }catch(e){}\n"+
+        "try{ if(typeof p2Render==='function') p2Render(); }catch(e){}\n"+
+        "try{ if(typeof preencherFiltrosAgendaOperacional==='function') preencherFiltrosAgendaOperacional(); }catch(e){}\n"+
+        "try{ if(typeof renderAgendaOperacional==='function') renderAgendaOperacional(); }catch(e){}\n"+
+      "})();");
+      return true;
+    } catch(e) { return false; }
+  }
+
+  function fullClean(){
+    cleanLocalStorage();
+    cleanCronograma();
+    cleanParentActionTree();
+  }
+
+  function currentCreateContext(){
+    var frame = document.getElementById('frame-acoes');
+    var doc;
+    try { doc = frame && (frame.contentDocument || frame.contentWindow.document); } catch(e){ doc=null; }
+    if (!doc) return null;
+    function read(sel){ var el=doc.querySelector(sel); return el ? s(typeof el.value !== 'undefined' ? el.value : el.textContent) : ''; }
+    return { doc:doc, area:read('#titulo-editavel') || read('[data-field="area"]'), pillar:read('#subtitulo-editavel') || read('[data-field="pilar"]'), unit:read('#unidade-editavel') || read('[data-field="unidade"]') };
+  }
+
+  function nextACFromCron(unit){
+    var max = 0;
+    try {
+      var fr = document.getElementById('frame-cronograma'); var w = fr && fr.contentWindow;
+      var data = w && w.eval('typeof UNITS_DATA!=="undefined" ? UNITS_DATA : (window.UNITS_DATA||{})');
+      Object.keys(data||{}).forEach(function(u){
+        if (!isTargetUnit(unit) && norm(u) !== norm(unit)) return;
+        (Array.isArray(data[u]) ? data[u] : []).forEach(function(a){ max = Math.max(max, codeNum(a && (a.idac || a.id || a.codigo || a.code))); });
+      });
+    } catch(e) {}
+    return formatAC(max + 1);
+  }
+
+  var oldGet = window.getNextActionCode;
+  window.getNextActionCode = function(areaKey, pillarKey, unitKey){
+    var isTarget = (norm(areaKey)===norm(key(TARGET_AREA)) || norm(areaKey)===norm(TARGET_AREA)) &&
+                   (norm(pillarKey)===norm(key(TARGET_PILLAR)) || norm(pillarKey)===norm(TARGET_PILLAR)) &&
+                   (norm(unitKey)===norm(key(TARGET_UNIT)) || norm(unitKey)===norm(TARGET_UNIT));
+    if (isTarget) { fullClean(); return 'AC-01'; }
+    if (typeof oldGet === 'function') return oldGet.apply(this, arguments);
+    return 'AC-01';
+  };
+
+  function forceCreateCodeIfTarget(){
+    var ctx = currentCreateContext();
+    if (!ctx || !ctx.doc) return;
+    if (!isTargetCtx(ctx.area, ctx.pillar, ctx.unit)) return;
+    fullClean();
+    var ac = 'AC-01';
+    var codeEl = ctx.doc.querySelector('.parent-action-code');
+    var descEl = ctx.doc.querySelector('.parent-action-desc');
+    var original = ctx.doc.querySelector('[data-parent-original-action-field="1"], #acaoReset');
+    if (codeEl) { codeEl.value = ac; try{codeEl.dispatchEvent(new Event('input',{bubbles:true}));}catch(e){} }
+    if (original) {
+      var desc = descEl ? s(descEl.value || descEl.textContent) : '';
+      if (typeof original.value !== 'undefined') original.value = ac + (desc ? ' ' + desc : '');
+      else original.textContent = ac + (desc ? ' ' + desc : '');
+      try{original.dispatchEvent(new Event('input',{bubbles:true}));}catch(e){}
+      try{original.dispatchEvent(new Event('change',{bubbles:true}));}catch(e){}
+    }
+  }
+
+  function patchSave(){
+    var fr = document.getElementById('frame-cronograma');
+    var w = fr && fr.contentWindow;
+    if (w && typeof w.salvarNaNuvem === 'function' && !w.__v130CleanBeforeCloudSave) {
+      var old = w.salvarNaNuvem;
+      w.salvarNaNuvem = async function(){
+        try { fullClean(); } catch(e) {}
+        return old.apply(this, arguments);
+      };
+      w.__v130CleanBeforeCloudSave = true;
+    }
+  }
+
+  var oldSaveNew = window.saveNewActionFromCreateFrame;
+  if (typeof oldSaveNew === 'function' && !oldSaveNew.__v130ForceAC01) {
+    var wrapped = function(){
+      try { forceCreateCodeIfTarget(); } catch(e) {}
+      return oldSaveNew.apply(this, arguments);
+    };
+    wrapped.__v130ForceAC01 = true;
+    window.saveNewActionFromCreateFrame = wrapped;
+  }
+
+  function boot(){
+    fullClean();
+    patchSave();
+    forceCreateCodeIfTarget();
+  }
+  window.limpezaDefinitivaInstitucional = function(){ fullClean(); alert('INSTITUCIONAL foi removida definitivamente da base local e da navegação. Clique em Salvar alterações para gravar na nuvem. Ao recriar MARKETING > REDES SOCIAIS > INSTITUCIONAL, o código começa em AC-01.'); };
+  window.addEventListener('load', function(){ setTimeout(boot,300); setTimeout(boot,1200); setTimeout(boot,3000); });
+  var cf = document.getElementById('frame-cronograma');
+  if (cf) cf.addEventListener('load', function(){ setTimeout(boot,500); setTimeout(boot,1800); });
+  document.addEventListener('input', function(){ setTimeout(forceCreateCodeIfTarget,50); }, true);
+  document.addEventListener('click', function(){ setTimeout(function(){ patchSave(); forceCreateCodeIfTarget(); },80); }, true);
+  setInterval(function(){ patchSave(); forceCreateCodeIfTarget(); }, 1200);
+})();
+</script>
+
 </body>
 </html>
 <!-- v30 — destaque visual da aba principal ativa -->
