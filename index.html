@@ -3091,6 +3091,8 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
 &lt;button class=&quot;btn&quot; onclick=&quot;exportarJSON()&quot;&gt;⬇️ Exportar JSON&lt;/button&gt;
 &lt;button class=&quot;btn&quot; onclick=&quot;document.getElementById(&#x27;json-import-input&#x27;).click()&quot;&gt;⬆️ Importar JSON&lt;/button&gt;
 &lt;input accept=&quot;application/json,.json&quot; id=&quot;json-import-input&quot; onchange=&quot;importarJSON(event)&quot; style=&quot;display:none&quot; type=&quot;file&quot;/&gt;
+&lt;button class=&quot;btn&quot; onclick=&quot;udAbrirModalEditar()&quot;&gt;✎ Editar Ação&lt;/button&gt;
+&lt;button class=&quot;btn&quot; onclick=&quot;udAbrirModalExcluir()&quot;&gt;× Excluir Ação&lt;/button&gt;
 &lt;button class=&quot;btn&quot; onclick=&quot;window.print()&quot;&gt;🖨️ Imprimir&lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -9778,6 +9780,112 @@ init();
   ]
 };
 
+
+  // V21 — salvar UNITS_DATA no localStorage
+  (function(){
+    try{
+      var s=localStorage.getItem(&#x27;reset.units_data&#x27;);
+      if(s){var d=JSON.parse(s);if(d&amp;&amp;typeof d===&#x27;object&#x27;){var ks=Object.keys(UNITS_DATA);for(var i=0;i&lt;ks.length;i++)delete UNITS_DATA[ks[i]];Object.assign(UNITS_DATA,d);}}
+    }catch(e){}
+  })();
+
+  function salvarUnitsData(){
+    try{localStorage.setItem(&#x27;reset.units_data&#x27;,JSON.stringify(UNITS_DATA));}catch(e){}
+  }
+
+  var _udEditTarget=null;
+
+  function udFecharModais(){
+    [&#x27;ud-modal-editar&#x27;,&#x27;ud-modal-excluir&#x27;].forEach(function(id){
+      var el=document.getElementById(id);if(el)el.style.display=&#x27;none&#x27;;
+    });
+    _udEditTarget=null;
+  }
+
+  function udAbrirModalEditar(){
+    var modal=document.getElementById(&#x27;ud-modal-editar&#x27;);
+    var body=document.getElementById(&#x27;ud-editar-body&#x27;);
+    if(!modal||!body)return;
+    var html=&#x27;&#x27;;
+    Object.entries(UNITS_DATA).forEach(function(kv){
+      var un=kv[0];var acoes=kv[1]||[];if(!acoes.length)return;
+      html+=&#x27;&lt;p style=&quot;font-family:var(--font-mono);font-size:10px;color:var(--brand);text-transform:uppercase;margin:12px 0 6px&quot;&gt;&#x27;+escapeHtml(un)+&#x27;&lt;/p&gt;&#x27;;
+      acoes.forEach(function(ac,ai){
+        var sel=_udEditTarget&amp;&amp;_udEditTarget.u===un&amp;&amp;_udEditTarget.ai===ai;
+        var bg=sel?&#x27;rgba(168,204,58,.10)&#x27;:&#x27;#071225&#x27;;
+        var bd=sel?&#x27;rgba(168,204,58,.4)&#x27;:&#x27;#1e3050&#x27;;
+        html+=&#x27;&lt;div onclick=&quot;udSelEditar(\&#x27;&#x27;+(un.replace(/\&#x27;/g,&#x27;&#x27;))+&#x27;\&#x27;,&#x27;+ai+&#x27;)&quot; style=&quot;display:flex;align-items:center;gap:8px;padding:8px 10px;background:&#x27;+bg+&#x27;;border:1px solid &#x27;+bd+&#x27;;border-radius:6px;margin-bottom:4px;cursor:pointer&quot;&gt;&lt;span style=&quot;color:var(--brand);font-family:var(--font-mono);font-size:11px;font-weight:900&quot;&gt;&#x27;+escapeHtml(ac.idac||&#x27;&#x27;)+&#x27;&lt;/span&gt;&lt;span style=&quot;color:#fff;font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap&quot;&gt;&#x27;+escapeHtml(ac.nome||&#x27;&#x27;)+&#x27;&lt;/span&gt;&lt;/div&gt;&#x27;;
+      });
+    });
+    if(_udEditTarget){
+      var a=(UNITS_DATA[_udEditTarget.u]||[])[_udEditTarget.ai];
+      if(a){
+        html+=&#x27;&lt;div style=&quot;margin-top:16px;padding-top:14px;border-top:1px solid #1e3050&quot;&gt;&lt;label style=&quot;display:block;font-size:10px;font-family:var(--font-mono);color:var(--brand);text-transform:uppercase;margin-bottom:6px&quot;&gt;Nome&lt;/label&gt;&lt;input id=&quot;ud-input-nome&quot; value=&quot;&#x27;+escapeHtml(a.nome||&#x27;&#x27;)+&#x27;&quot; style=&quot;width:100%;background:#071225;color:#fff;border:1px solid #2a4268;border-radius:8px;padding:8px 12px;font-size:13px;box-sizing:border-box;outline:none&quot;&gt;&lt;p style=&quot;color:#9ab;font-size:11px;margin:10px 0 6px&quot;&gt;Melhorias:&lt;/p&gt;&lt;div id=&quot;ud-melhorias-edit&quot;&gt;&#x27;;
+        (a.melhorias||[]).forEach(function(m,mi){
+          html+=&#x27;&lt;div style=&quot;display:flex;align-items:center;gap:6px;padding:5px 8px;background:#050d1c;border:1px solid #1e3050;border-radius:5px;margin-bottom:3px&quot;&gt;&lt;span style=&quot;color:var(--brand);font-family:var(--font-mono);font-size:10px;font-weight:900&quot;&gt;&#x27;+escapeHtml(m.idm||&#x27;&#x27;)+&#x27;&lt;/span&gt;&lt;input data-midx=&quot;&#x27;+mi+&#x27;&quot; value=&quot;&#x27;+escapeHtml(m.desc||&#x27;&#x27;)+&#x27;&quot; style=&quot;flex:1;background:transparent;color:#fff;border:none;border-bottom:1px solid #2a4268;padding:2px 4px;font-size:12px;outline:none&quot;&gt;&lt;/div&gt;&#x27;;
+        });
+        html+=&#x27;&lt;/div&gt;&lt;/div&gt;&#x27;;
+      }
+    }
+    body.innerHTML=html;modal.style.display=&#x27;flex&#x27;;
+  }
+
+  function udSelEditar(u,ai){_udEditTarget={u:u,ai:ai};udAbrirModalEditar();}
+
+  function udSalvarEdicao(){
+    if(!_udEditTarget)return;
+    var a=(UNITS_DATA[_udEditTarget.u]||[])[_udEditTarget.ai];
+    if(!a)return;
+    var inp=document.getElementById(&#x27;ud-input-nome&#x27;);
+    if(inp&amp;&amp;inp.value.trim())a.nome=inp.value.trim();
+    document.querySelectorAll(&#x27;#ud-melhorias-edit input[data-midx]&#x27;).forEach(function(el){
+      var mi=parseInt(el.getAttribute(&#x27;data-midx&#x27;),10);
+      if(!isNaN(mi)&amp;&amp;(a.melhorias||[])[mi]&amp;&amp;el.value.trim())a.melhorias[mi].desc=el.value.trim();
+    });
+    salvarUnitsData();
+    var info=unitMap[_udEditTarget.u];
+    if(info)renderUnit(info.key,_udEditTarget.u);
+    atualizarStatsUnidade(_udEditTarget.u);
+    udFecharModais();
+  }
+
+  function udAbrirModalExcluir(){
+    var modal=document.getElementById(&#x27;ud-modal-excluir&#x27;);
+    var body=document.getElementById(&#x27;ud-excluir-body&#x27;);
+    if(!modal||!body)return;
+    var html=&#x27;&#x27;;
+    Object.entries(UNITS_DATA).forEach(function(kv){
+      var un=kv[0];var acoes=kv[1]||[];if(!acoes.length)return;
+      html+=&#x27;&lt;p style=&quot;font-family:var(--font-mono);font-size:10px;color:var(--brand);text-transform:uppercase;margin:12px 0 6px&quot;&gt;&#x27;+escapeHtml(un)+&#x27;&lt;/p&gt;&#x27;;
+      acoes.forEach(function(ac,ai){
+        html+=&#x27;&lt;div style=&quot;background:#071225;border:1px solid #1e3050;border-radius:6px;margin-bottom:6px;overflow:hidden&quot;&gt;&lt;div style=&quot;display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid #0e1f38&quot;&gt;&lt;span style=&quot;color:var(--brand);font-family:var(--font-mono);font-size:11px;font-weight:900&quot;&gt;&#x27;+escapeHtml(ac.idac||&#x27;&#x27;)+&#x27;&lt;/span&gt;&lt;span style=&quot;color:#fff;font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap&quot;&gt;&#x27;+escapeHtml(ac.nome||&#x27;&#x27;)+&#x27;&lt;/span&gt;&lt;button onclick=&quot;udConfAcao(\&#x27;&#x27;+(un.replace(/\&#x27;/g,&#x27;&#x27;))+&#x27;\&#x27;,&#x27;+ai+&#x27;)&quot; style=&quot;background:transparent;border:1px solid rgba(248,113,113,.5);border-radius:4px;color:#f87171;font-size:12px;font-weight:900;cursor:pointer;padding:2px 8px;flex-shrink:0&quot;&gt;x Excluir&lt;/button&gt;&lt;/div&gt;&#x27;;
+        (ac.melhorias||[]).forEach(function(m,mi){
+          html+=&#x27;&lt;div style=&quot;display:flex;align-items:center;gap:8px;padding:5px 10px 5px 24px&quot;&gt;&lt;span style=&quot;color:#5a7fb0;font-family:var(--font-mono);font-size:10px;font-weight:900&quot;&gt;&#x27;+escapeHtml(m.idm||&#x27;&#x27;)+&#x27;&lt;/span&gt;&lt;span style=&quot;color:#9ab;font-size:11px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap&quot;&gt;&#x27;+escapeHtml(m.desc||&#x27;&#x27;)+&#x27;&lt;/span&gt;&lt;button onclick=&quot;udConfMelhoria(\&#x27;&#x27;+(un.replace(/\&#x27;/g,&#x27;&#x27;))+&#x27;\&#x27;,&#x27;+ai+&#x27;,&#x27;+mi+&#x27;)&quot; style=&quot;background:transparent;border:none;color:rgba(248,113,113,.6);font-size:14px;cursor:pointer;padding:0 6px&quot;&gt;x&lt;/button&gt;&lt;/div&gt;&#x27;;
+        });
+        html+=&#x27;&lt;/div&gt;&#x27;;
+      });
+    });
+    body.innerHTML=html;modal.style.display=&#x27;flex&#x27;;
+  }
+
+  function udConfAcao(un,ai){
+    var ac=(UNITS_DATA[un]||[])[ai];
+    if(!ac||!confirm(&#x27;Excluir acao &#x27;+escapeHtml(ac.idac||&#x27;&#x27;)+&#x27;?&#x27;))return;
+    (UNITS_DATA[un]||[]).splice(ai,1);salvarUnitsData();
+    var info=unitMap[un];if(info)renderUnit(info.key,un);atualizarStatsUnidade(un);
+    if(typeof p2Render===&#x27;function&#x27;)p2Render();udAbrirModalExcluir();
+  }
+
+  function udConfMelhoria(un,ai,mi){
+    var ac=(UNITS_DATA[un]||[])[ai];if(!ac)return;
+    var m=(ac.melhorias||[])[mi];
+    if(!m||!confirm(&#x27;Excluir melhoria &#x27;+(m.idm||&#x27;&#x27;)+&#x27;?&#x27;))return;
+    ac.melhorias.splice(mi,1);salvarUnitsData();
+    var info=unitMap[un];if(info)renderUnit(info.key,un);
+    if(typeof p2Render===&#x27;function&#x27;)p2Render();udAbrirModalExcluir();
+  }
+
+
   const unitMap = {
     &#x27;Grande ABC&#x27;:     { key: &#x27;abc&#x27;,        cor: &#x27;#34d399&#x27; },
     &#x27;Pátio Paulista&#x27;: { key: &#x27;patio&#x27;,      cor: &#x27;#3b82f6&#x27; },
@@ -11389,7 +11497,7 @@ init();
           return String(acao.prazo||&#x27;&#x27;).replace(&#x27; dias&#x27;,&#x27;&#x27;).trim()||&#x27;—&#x27;;
         })();
         // Aplicação e status da ação (salvos por chave)
-        var P2_APLICS_DEFAULT=[&#x27;Todas as Unidades Bolix&#x27;,&#x27;Bolix - Grand Plaza ABC&#x27;,&#x27;Bolix - Pátio Paulista&#x27;,&#x27;Bolix - Interlagos&#x27;,&#x27;Bolix - Guarulhos&#x27;];var P2_APLICS_EXTRA=(function(){try{return JSON.parse(localStorage.getItem(&#x27;reset.p2.aplics.extra&#x27;)||&#x27;[]&#x27;);}catch(e){return[];}})();var P2_APLICS=P2_APLICS_DEFAULT.concat(P2_APLICS_EXTRA.filter(function(x){return P2_APLICS_DEFAULT.indexOf(x)<0;}));
+        var P2_APLICS=(function(){try{var s=localStorage.getItem(&#x27;reset.p2.aplics&#x27;);return s?JSON.parse(s):[&#x27;Todas as Unidades Bolix&#x27;,&#x27;Bolix - Grand Plaza ABC&#x27;,&#x27;Bolix - Pátio Paulista&#x27;,&#x27;Bolix - Interlagos&#x27;,&#x27;Bolix - Guarulhos&#x27;];}catch(e){return[&#x27;Todas as Unidades Bolix&#x27;,&#x27;Bolix - Grand Plaza ABC&#x27;,&#x27;Bolix - Pátio Paulista&#x27;,&#x27;Bolix - Interlagos&#x27;,&#x27;Bolix - Guarulhos&#x27;];}})();
         var P2_STLIST=[&#x27;Não iniciada&#x27;,&#x27;Em andamento&#x27;,&#x27;Concluída&#x27;,&#x27;Com pendência&#x27;,&#x27;Não concluída&#x27;,&#x27;Pausado&#x27;,&#x27;Cancelado&#x27;];
         var P2_AC_PRIOS=[&#x27;Máxima&#x27;,&#x27;Alta&#x27;,&#x27;Média&#x27;,&#x27;Baixa&#x27;];
         var aplKey=&#x27;reset.p2ac.&#x27;+ak+&#x27;.aplic&#x27;;
@@ -12096,6 +12204,28 @@ init();
     escutarNuvemEmTempoReal();
   }
 &lt;/script&gt;
+&lt;div id=&quot;ud-modal-editar&quot; style=&quot;display:none;position:fixed;inset:0;z-index:60000;background:rgba(3,8,18,.88);backdrop-filter:blur(5px);align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto&quot; onclick=&quot;if(event.target===this)udFecharModais()&quot;&gt;
+  &lt;div style=&quot;width:min(640px,calc(100vw - 32px));background:linear-gradient(180deg,#0b1628,#060d1a);border:1px solid rgba(168,204,58,.65);border-radius:14px;padding:24px&quot;&gt;
+    &lt;div style=&quot;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid #1e3050&quot;&gt;
+      &lt;span style=&quot;font-family:var(--font-mono);font-size:13px;font-weight:900;text-transform:uppercase;color:var(--brand)&quot;&gt;Editar Ação&lt;/span&gt;
+      &lt;button onclick=&quot;udFecharModais()&quot; style=&quot;width:32px;height:32px;border-radius:8px;border:1px solid #2a4268;background:transparent;color:#fff;font-size:20px;cursor:pointer&quot;&gt;&amp;#x00D7;&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div id=&quot;ud-editar-body&quot;&gt;&lt;/div&gt;
+    &lt;div style=&quot;display:flex;justify-content:flex-end;gap:8px;margin-top:18px&quot;&gt;
+      &lt;button class=&quot;btn&quot; onclick=&quot;udFecharModais()&quot;&gt;Cancelar&lt;/button&gt;
+      &lt;button class=&quot;btn primary&quot; onclick=&quot;udSalvarEdicao()&quot;&gt;Salvar&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&quot;ud-modal-excluir&quot; style=&quot;display:none;position:fixed;inset:0;z-index:60000;background:rgba(3,8,18,.88);backdrop-filter:blur(5px);align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto&quot; onclick=&quot;if(event.target===this)udFecharModais()&quot;&gt;
+  &lt;div style=&quot;width:min(640px,calc(100vw - 32px));background:linear-gradient(180deg,#0b1628,#060d1a);border:1px solid rgba(248,113,113,.4);border-radius:14px;padding:24px&quot;&gt;
+    &lt;div style=&quot;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid #1e3050&quot;&gt;
+      &lt;span style=&quot;font-family:var(--font-mono);font-size:13px;font-weight:900;text-transform:uppercase;color:#f87171&quot;&gt;Excluir Ação / Melhoria&lt;/span&gt;
+      &lt;button onclick=&quot;udFecharModais()&quot; style=&quot;width:32px;height:32px;border-radius:8px;border:1px solid #2a4268;background:transparent;color:#fff;font-size:20px;cursor:pointer&quot;&gt;&amp;#x00D7;&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div id=&quot;ud-excluir-body&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;" title="Cronograma RESET"></iframe>
 </section>
@@ -15600,6 +15730,28 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
   document.addEventListener('DOMContentLoaded', function(){ calcMelhoriasPro(); });
 })();
 &lt;/script&gt;
+&lt;div id=&quot;ud-modal-editar&quot; style=&quot;display:none;position:fixed;inset:0;z-index:60000;background:rgba(3,8,18,.88);backdrop-filter:blur(5px);align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto&quot; onclick=&quot;if(event.target===this)udFecharModais()&quot;&gt;
+  &lt;div style=&quot;width:min(640px,calc(100vw - 32px));background:linear-gradient(180deg,#0b1628,#060d1a);border:1px solid rgba(168,204,58,.65);border-radius:14px;padding:24px&quot;&gt;
+    &lt;div style=&quot;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid #1e3050&quot;&gt;
+      &lt;span style=&quot;font-family:var(--font-mono);font-size:13px;font-weight:900;text-transform:uppercase;color:var(--brand)&quot;&gt;Editar Ação&lt;/span&gt;
+      &lt;button onclick=&quot;udFecharModais()&quot; style=&quot;width:32px;height:32px;border-radius:8px;border:1px solid #2a4268;background:transparent;color:#fff;font-size:20px;cursor:pointer&quot;&gt;&amp;#x00D7;&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div id=&quot;ud-editar-body&quot;&gt;&lt;/div&gt;
+    &lt;div style=&quot;display:flex;justify-content:flex-end;gap:8px;margin-top:18px&quot;&gt;
+      &lt;button class=&quot;btn&quot; onclick=&quot;udFecharModais()&quot;&gt;Cancelar&lt;/button&gt;
+      &lt;button class=&quot;btn primary&quot; onclick=&quot;udSalvarEdicao()&quot;&gt;Salvar&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&quot;ud-modal-excluir&quot; style=&quot;display:none;position:fixed;inset:0;z-index:60000;background:rgba(3,8,18,.88);backdrop-filter:blur(5px);align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto&quot; onclick=&quot;if(event.target===this)udFecharModais()&quot;&gt;
+  &lt;div style=&quot;width:min(640px,calc(100vw - 32px));background:linear-gradient(180deg,#0b1628,#060d1a);border:1px solid rgba(248,113,113,.4);border-radius:14px;padding:24px&quot;&gt;
+    &lt;div style=&quot;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid #1e3050&quot;&gt;
+      &lt;span style=&quot;font-family:var(--font-mono);font-size:13px;font-weight:900;text-transform:uppercase;color:#f87171&quot;&gt;Excluir Ação / Melhoria&lt;/span&gt;
+      &lt;button onclick=&quot;udFecharModais()&quot; style=&quot;width:32px;height:32px;border-radius:8px;border:1px solid #2a4268;background:transparent;color:#fff;font-size:20px;cursor:pointer&quot;&gt;&amp;#x00D7;&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div id=&quot;ud-excluir-body&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 " title="Ações — RESET AC-03"></iframe>
