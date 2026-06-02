@@ -20332,16 +20332,8 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
           });
         }
 
-        // Se a sujeira gerou unidades SEM UNIDADE/UNIDADE, apaga também o bloco de teste Institucional
-        // para permitir recriar MARKETING > REDES SOCIAIS > INSTITUCIONAL começando em AC-01.
-        if (hadGhostUnit) {
-          Object.keys(UNITS_DATA).forEach(function(un){
-            if (canon(un) === 'INSTITUCIONAL') { delete UNITS_DATA[un]; changed = true; }
-          });
-          if (typeof unitMap !== 'undefined' && unitMap) {
-            Object.keys(unitMap).forEach(function(un){ if (canon(un) === 'INSTITUCIONAL') { delete unitMap[un]; changed = true; } });
-          }
-        }
+        // BUGFIX: removido bloco que apagava INSTITUCIONAL ao detectar ghost units.
+        // BUGFIX: bloco que deletava INSTITUCIONAL removido — não apagar unidades reais ao limpar ghost units.
 
         // Dentro de cada unidade, remove registros sem área/pilar reais ou sem código real.
         Object.keys(UNITS_DATA).forEach(function(un){
