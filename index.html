@@ -12290,10 +12290,8 @@ window.excluirMelhoria=function(b){
     }else{
       action.titulo=payload.titulo; action.nome=payload.idac+' — '+payload.titulo; action.area=payload.area; action.areaAcao=payload.area; action.pilar=payload.pilar; action.pillar=payload.pilar; action.melhorias=payload.melhorias||action.melhorias||[];
     }
-    /* T54: salva usando localStorage direto (mais robusto que cw.localStorage no HTTPS)
-       e tambem dispara cw.salvarUnitsData() para garantir consistencia no srcdoc. */
+    /* T54: salva usando localStorage direto (mais robusto que cw.localStorage no HTTPS). */
     try{ localStorage.setItem('reset.units_data',JSON.stringify(cw.UNITS_DATA)); }catch(e){}
-    try{ if(typeof cw.salvarUnitsData==='function') cw.salvarUnitsData(); }catch(e){}
     renderCronogramaForcado();
     return true;
   }
