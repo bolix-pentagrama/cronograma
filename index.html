@@ -3994,6 +3994,7 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     if (sgmoTab) sgmoTab.classList.toggle(&#x27;active&#x27;, tab === &#x27;sgmo&#x27;);
     if (tab === &#x27;calendario&#x27;) renderCalendar();
     if (tab === &#x27;projetos2&#x27;) p2Render();
+    if (tab === &#x27;unidades&#x27;) { try { if(typeof window.parent.__cronSyncUnidades === &#x27;function&#x27;) window.parent.__cronSyncUnidades(); } catch(e) {} }
   }
 
 
@@ -4385,7 +4386,7 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
       var stVal; try{stVal=localStorage.getItem(stKey)||(acao.status||&#x27;Não iniciada&#x27;);}catch(e){stVal=acao.status||&#x27;Não iniciada&#x27;;}
       var prVal; try{prVal=localStorage.getItem(prKey)||&#x27;Média&#x27;;}catch(e){prVal=&#x27;Média&#x27;;}
       var selAplic=p2SelLocal(P2_APLICS,aplVal,&#x27;p2-ac-sel p2-aplicacao-verde&#x27;,&#x27;try{localStorage.setItem(\&#x27;&#x27;+aplKey+&#x27;\&#x27;,this.value);}catch(e){}p2Render()&#x27;);
-      var selSt=p2SelLocal(P2_STLIST,stVal,&#x27;p2-ac-status &#x27;+p2ac(stVal),&#x27;try{localStorage.setItem(\&#x27;&#x27;+stKey+&#x27;\&#x27;,this.value);var _ud=UNITS_DATA[\&#x27;&#x27;+un+&#x27;\&#x27;];if(_ud){var _ac=_ud.find(function(a){return String(a.idac||\&#x27;\&#x27;).toUpperCase()===\&#x27;&#x27;+(acao.idac||&#x27;&#x27;).toUpperCase()+&#x27;\&#x27;;});if(_ac){_ac.status=this.value;try{salvarUnitsData();}catch(e2){}}}  }catch(e){}p2Render()&#x27;);
+      var selSt=p2SelLocal(P2_STLIST,stVal,&#x27;p2-ac-status &#x27;+p2ac(stVal),&#x27;try{localStorage.setItem(\&#x27;&#x27;+stKey+&#x27;\&#x27;,this.value);}catch(e){}p2Render()&#x27;);
       var selPrioAc=p2SelLocal(P2_AC_PRIOS,prVal,&#x27;p2-ac-prio &#x27;+p2pc(prVal),&#x27;try{localStorage.setItem(\&#x27;&#x27;+prKey+&#x27;\&#x27;,this.value);}catch(e){}p2Render()&#x27;);
       html+=&#x27;&lt;div class=&quot;p2-action-card&quot; style=&quot;border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:10px&quot;&gt;&#x27;
         +&#x27;&lt;div class=&quot;p2-action-head&quot; style=&quot;display:grid;grid-template-columns:240px 70px minmax(260px,1fr) 92px 92px 58px 150px 132px 68px;gap:8px;align-items:center;background:var(--surface2);padding:10px 12px;border-bottom:1px solid rgba(168,204,58,.35)&quot;&gt;&#x27;
