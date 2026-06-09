@@ -11299,8 +11299,8 @@ window.excluirMelhoria=function(b){
         try { if (typeof atualizarTodasStats === 'function') atualizarTodasStats(); } catch(e) {}
         try { if (typeof atualizarTodosProgressos === 'function') atualizarTodosProgressos(); } catch(e) {}
         try { if (typeof renderCalendar === 'function') renderCalendar(); } catch(e) {}
-        try { if (typeof p2Render === 'function') p2Render(); } catch(e) {}
         try { if (typeof salvarUnitsData === 'function') salvarUnitsData(); } catch(e) {}
+        try { if (typeof p2Render === 'function') p2Render(); } catch(e) {}
         return { unidade:unidade, actionKey:_acaoKey(unidade, idac), acaoId:_acaoKey(unidade, idac), idac:idac, titulo:titulo };
       })(${JSON.stringify(payload)});
     `;
