@@ -3169,21 +3169,19 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
   }
 
   function calcularUltimaPrevisaoCronograma() {
+    /* T52: max TÉRMINO dos projetos em execução (reset.projetosExecucao.v1) */
     let ultima = null;
-    Object.entries(UNITS_DATA || {}).forEach(([unidade, actions]) =&gt; {
-      (actions || []).forEach(action =&gt; {
-        const acaoId = (unidade + &#x27;-&#x27; + action.idac).replace(/[^a-zA-Z0-9_-]/g, &#x27;-&#x27;);
-        const prevAcao = getSavedActionField(acaoId, &#x27;previsao&#x27;, action.previsao);
-        const dataAcao = parseDataResumo(prevAcao);
-        if (dataAcao &amp;&amp; (!ultima || dataAcao &gt; ultima)) ultima = dataAcao;
-        (action.melhorias || []).forEach(m =&gt; {
-          const mid = getMelhoriaId(unidade, action, m);
-          const prevMelhoria = getSavedField(mid, &#x27;previsao&#x27;, m.previsao);
-          const dataMelhoria = parseDataResumo(prevMelhoria);
-          if (dataMelhoria &amp;&amp; (!ultima || dataMelhoria &gt; ultima)) ultima = dataMelhoria;
+    try {
+      var _pjRaw = localStorage.getItem(&#x27;reset.projetosExecucao.v1&#x27;);
+      var _pjData = _pjRaw ? JSON.parse(_pjRaw) : {};
+      Object.values(_pjData || {}).forEach(function(arr) {
+        if (!Array.isArray(arr)) return;
+        arr.forEach(function(p) {
+          var _dt = parseDataResumo(p.termino || p.previsao || &#x27;&#x27;);
+          if (_dt &amp;&amp; (!ultima || _dt &gt; ultima)) ultima = _dt;
         });
       });
-    });
+    } catch(e) {}
     return ultima;
   }
 
@@ -11060,13 +11058,13 @@ window.excluirMelhoria=function(b){
             if (!desc) return;
             var existing = action.melhorias.find(function(x){ return String(x.idm || '').toUpperCase() === idm; });
             if (!existing) {
-              action.melhorias.push({ idm:idm, desc:desc, inicio:'', prazo:'', meses:'', previsao:'', conclusao:'', status:'' });
+              action.melhorias.push({ idm:idm, desc:desc, inicio:'', prazo:'', meses:'', previsao:_safe(m.previsao)||'', conclusao:'', status:'' });
             } else {
               existing.desc = desc;
               existing.inicio = existing.inicio || '';
               existing.prazo = existing.prazo || '';
               existing.meses = existing.meses || '';
-              existing.previsao = existing.previsao || '';
+              existing.previsao = _safe(m.previsao) || existing.previsao || '';
               existing.conclusao = existing.conclusao || '';
               existing.status = existing.status || '';
             }
@@ -11216,7 +11214,9 @@ window.excluirMelhoria=function(b){
         if (td) mdesc = safe(td.textContent).replace(/^Descreva.*$/i,'').trim();
       }
       if (!mdesc || /^descreva/i.test(mdesc)) return;
-      melhorias.push({ idm:idm, desc:mdesc });
+      var prevEl = row.querySelector('input[id$="_previsao"][type="date"]');
+      var mprev = prevEl ? safe(prevEl.value) : '';
+      melhorias.push({ idm:idm, desc:mdesc, previsao:mprev });
     });
 
     return { area:area, pillar:pillar, pilar:pillar, unidade:unidade, idac:code, titulo:desc, status:status || 'Não iniciada', melhorias:melhorias };
@@ -11280,13 +11280,13 @@ window.excluirMelhoria=function(b){
           if (!desc) return;
           var existing = action.melhorias.find(function(x){ return String(x.idm || '').toUpperCase() === idm; });
           if (!existing) {
-            action.melhorias.push({ idm:idm, desc:desc, inicio:'', prazo:'', meses:'', previsao:'', conclusao:'', status:'Não iniciada' });
+            action.melhorias.push({ idm:idm, desc:desc, inicio:'', prazo:'', meses:'', previsao:_safe(m.previsao)||'', conclusao:'', status:'Não iniciada' });
           } else {
             existing.desc = desc;
             existing.inicio = existing.inicio || '';
             existing.prazo = existing.prazo || '';
             existing.meses = existing.meses || '';
-            existing.previsao = existing.previsao || '';
+            existing.previsao = _safe(m.previsao) || existing.previsao || '';
             existing.conclusao = existing.conclusao || '';
             existing.status = existing.status || 'Não iniciada';
           }
@@ -11312,7 +11312,7 @@ window.excluirMelhoria=function(b){
     if (!payload) { alert('Não foi possível ler esta ação.'); return; }
     try {
       var result = updateCronogramaDirect(payload);
-      try { if (typeof window.__cronAplicar === 'function') window.__cronAplicar(); } catch(e) {}
+      try { if (typeof window.__cronSyncUnidades === 'function') window.__cronSyncUnidades(); } catch(e) {}
       frame.dataset.cronActionKey = result && result.actionKey ? result.actionKey : (payload.unidade + '-' + payload.idac).replace(/[^a-zA-Z0-9_-]/g,'-');
       frame.dataset.actionCode = payload.idac;
       frame.dataset.unitName = payload.unidade;
@@ -12272,7 +12272,14 @@ window.excluirMelhoria=function(b){
     var frame=document.getElementById('frame-cronograma');
     var cw=frame&&frame.contentWindow;
     if(!cw)return false;
-    if(!cw.UNITS_DATA)cw.UNITS_DATA={};
+    /* T54: seed cw.UNITS_DATA do const interno via eval antes de modificar.
+       Sem isso, apos reload cw.UNITS_DATA=={} (window prop vazia) e o save
+       sobrescreve todos os dados anteriores com apenas a nova acao. */
+    if(!cw.UNITS_DATA){
+      try{ cw.UNITS_DATA = cw.eval('typeof UNITS_DATA!=="undefined"?UNITS_DATA:null') || {}; }catch(e){
+        try{ cw.UNITS_DATA = JSON.parse(localStorage.getItem('reset.units_data')||'{}'); }catch(e2){ cw.UNITS_DATA={}; }
+      }
+    }
     if(!cw.UNITS_DATA[payload.unidade])cw.UNITS_DATA[payload.unidade]=[];
     var arr=cw.UNITS_DATA[payload.unidade];
     /* T24B: match por idac+área para não sobrescrever ação de área diferente com mesmo código */
@@ -12283,7 +12290,10 @@ window.excluirMelhoria=function(b){
     }else{
       action.titulo=payload.titulo; action.nome=payload.idac+' — '+payload.titulo; action.area=payload.area; action.areaAcao=payload.area; action.pilar=payload.pilar; action.pillar=payload.pilar; action.melhorias=payload.melhorias||action.melhorias||[];
     }
-    try{cw.localStorage.setItem('reset.units_data',JSON.stringify(cw.UNITS_DATA));}catch(e){}
+    /* T54: salva usando localStorage direto (mais robusto que cw.localStorage no HTTPS)
+       e tambem dispara cw.salvarUnitsData() para garantir consistencia no srcdoc. */
+    try{ localStorage.setItem('reset.units_data',JSON.stringify(cw.UNITS_DATA)); }catch(e){}
+    try{ if(typeof cw.salvarUnitsData==='function') cw.salvarUnitsData(); }catch(e){}
     renderCronogramaForcado();
     return true;
   }
@@ -13213,7 +13223,16 @@ window.excluirMelhoria=function(b){
     if(old) old.remove();
     var host=section.querySelector('#p2-host');
     if(host) host.style.display='';
-    try { if (typeof cw.p2Render === 'function') cw.p2Render(); } catch(e) {}
+    /* T53-B: so re-renderiza P2 se a aba projetos2 esta visivel.
+       Cliques dentro do iframe nao propagam ao main doc; quando usuario
+       esta em outra sub-aba, re-renderizar P2 e desnecessario e pode
+       interferir em interacoes (ex: SELECT aberto). */
+    var p2Visible = !section.classList.contains('hidden');
+    if(p2Visible) {
+      try { if (typeof cw.p2Render === 'function') cw.p2Render(); } catch(e) {}
+    }
+    /* T53-A: atualiza contador de data apos qualquer ciclo de render */
+    try { if (typeof cw.atualizarResumoGeral === 'function') cw.atualizarResumoGeral(); } catch(e) {}
   }
 
 
@@ -13256,6 +13275,32 @@ window.excluirMelhoria=function(b){
     _unidadesHash='';
     renderUnidadesLayout();
     renderProjetosLayout();
+  };
+
+  /* T50: sync UNITS_DATA + renderUnidadesLayout sem chamar renderProjetosLayout.
+     Usado em updateAction: o eval já chamou salvarUnitsData()+p2Render() então P2 está
+     atualizado; uma segunda chamada via renderProjetosLayout interfere nos botões do P2. */
+  window.__cronSyncUnidades = function(){
+    var _cron = document.getElementById('frame-cronograma');
+    var _cw = _cron && _cron.contentWindow;
+    if(_cw){
+      try{
+        var _fresh = _cw.eval('typeof UNITS_DATA !== \'undefined\' ? UNITS_DATA : null');
+        if(_fresh && typeof _fresh === 'object' && Object.keys(_fresh).length){
+          if(!_cw.UNITS_DATA) _cw.UNITS_DATA = {};
+          Object.keys(_fresh).forEach(function(u){ _cw.UNITS_DATA[u] = _fresh[u]; });
+          Object.keys(_cw.UNITS_DATA).forEach(function(u){ if(!_fresh[u]) delete _cw.UNITS_DATA[u]; });
+        }
+      }catch(e){}
+    }
+    _unidadesHash='';
+    renderUnidadesLayout();
+    /* T53-A: atualiza data counter apos sync */
+    try {
+      var _cron2 = document.getElementById('frame-cronograma');
+      if(_cron2 && _cron2.contentWindow && typeof _cron2.contentWindow.atualizarResumoGeral === 'function')
+        _cron2.contentWindow.atualizarResumoGeral();
+    } catch(e) {}
   };
 
   // V22: removido setInterval de estilo antigo; causava reflow/tremor e conflitava com o grid final.
