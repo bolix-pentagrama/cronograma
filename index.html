@@ -2803,7 +2803,7 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
       &lt;h2&gt;Projetos em Execução&lt;/h2&gt;
       &lt;div style=&quot;display:flex;gap:8px;align-items:center;flex-wrap:wrap&quot;&gt;
         &lt;input class=&quot;p2-filter&quot; id=&quot;p2-filter&quot; oninput=&quot;p2Render()&quot; placeholder=&quot;Buscar por ação, melhoria ou projeto&quot; type=&quot;search&quot;/&gt;
-        &lt;button class=&quot;btn primary&quot; onclick=&quot;p2ModalAbrir()&quot; type=&quot;button&quot;&gt;+ Incluir Projeto&lt;/button&gt;
+        &lt;button class=&quot;btn primary&quot; type=&quot;button&quot;&gt;+ Incluir Projeto&lt;/button&gt;
         &lt;button class=&quot;btn&quot; onclick=&quot;p2AplicacaoAbrir()&quot; type=&quot;button&quot;&gt;+ Incluir Aplicação&lt;/button&gt;
       &lt;/div&gt;
     &lt;/div&gt;
@@ -2843,56 +2843,6 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
   &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id=&quot;p2-modal&quot; style=&quot;display:none;position:fixed;inset:0;z-index:40000;background:rgba(3,8,18,.85);backdrop-filter:blur(5px);align-items:flex-start;justify-content:center;padding:20px;padding-top:40px;overflow-y:auto&quot; onclick=&quot;if(event.target===this)p2ModalFechar()&quot;&gt;
-  &lt;div style=&quot;width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 60px);overflow-y:auto;background:linear-gradient(180deg,#0b1628,#060d1a);border:1px solid rgba(168,204,58,.65);border-radius:14px;box-shadow:0 0 28px rgba(168,204,58,.18),0 24px 80px rgba(0,0,0,.6);padding:24px&quot;&gt;
-    &lt;div style=&quot;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid #1e3050&quot;&gt;
-      &lt;div&gt;
-        &lt;div style=&quot;font-family:var(--font-mono);font-size:15px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--brand)&quot;&gt;Incluir Projeto&lt;/div&gt;
-        &lt;div style=&quot;margin-top:4px;color:#5a7499;font-size:12px&quot;&gt;Preencha os campos e salve o projeto na melhoria selecionada.&lt;/div&gt;
-      &lt;/div&gt;
-      &lt;button onclick=&quot;p2ModalFechar()&quot; style=&quot;width:32px;height:32px;border-radius:8px;border:1px solid #2a4268;background:transparent;color:#fff;font-size:20px;cursor:pointer&quot;&gt;&amp;#x00D7;&lt;/button&gt;
-    &lt;/div&gt;
-    &lt;div style=&quot;display:grid;grid-template-columns:1fr 1fr;gap:14px&quot;&gt;
-      &lt;label style=&quot;grid-column:1/-1&quot;&gt;
-        &lt;span style=&quot;display:block;font-family:var(--font-mono);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--brand);margin-bottom:6px&quot;&gt;Ação&lt;/span&gt;
-        &lt;select id=&quot;p2m-acao&quot; onchange=&quot;p2ModalMelhorias()&quot; style=&quot;width:100%;min-height:40px;border:1px solid #2a4268;border-radius:8px;background:#071225;color:#fff;padding:9px 12px;font-size:12px;font-family:var(--font-mono);font-weight:700;outline:none&quot;&gt;&lt;/select&gt;
-      &lt;/label&gt;
-      &lt;label style=&quot;grid-column:1/-1&quot;&gt;
-        &lt;span style=&quot;display:block;font-family:var(--font-mono);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--brand);margin-bottom:6px&quot;&gt;Melhoria&lt;/span&gt;
-        &lt;select id=&quot;p2m-melhoria&quot; onchange=&quot;p2ModalAtualizarCodigo()&quot; style=&quot;width:100%;min-height:40px;border:1px solid #2a4268;border-radius:8px;background:#071225;color:#fff;padding:9px 12px;font-size:12px;font-family:var(--font-mono);font-weight:700;outline:none&quot;&gt;&lt;/select&gt;
-      &lt;/label&gt;
-      &lt;div id=&quot;p2m-codigo-info&quot; style=&quot;grid-column:1/-1;border:1px solid rgba(168,204,58,.35);background:rgba(168,204,58,.08);border-radius:8px;padding:10px 12px;font-family:var(--font-mono);font-size:11px;font-weight:800;color:var(--brand);letter-spacing:.04em;text-transform:uppercase&quot;&gt;Código gerado automaticamente ao salvar&lt;/div&gt;
-      &lt;label&gt;
-        &lt;span style=&quot;display:block;font-family:var(--font-mono);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--brand);margin-bottom:6px&quot;&gt;Prioridade&lt;/span&gt;
-        &lt;select id=&quot;p2m-prioridade&quot; style=&quot;width:100%;min-height:40px;border:1px solid #2a4268;border-radius:8px;background:#071225;color:#fff;padding:9px 12px;font-size:12px;font-family:var(--font-mono);font-weight:700;outline:none&quot;&gt;
-          &lt;option&gt;Máxima&lt;/option&gt;&lt;option&gt;Alta&lt;/option&gt;&lt;option selected&gt;Média&lt;/option&gt;&lt;option&gt;Baixa&lt;/option&gt;
-        &lt;/select&gt;
-      &lt;/label&gt;
-      &lt;label style=&quot;grid-column:1/-1&quot;&gt;
-        &lt;span style=&quot;display:block;font-family:var(--font-mono);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--brand);margin-bottom:6px&quot;&gt;Descrição do Projeto&lt;/span&gt;
-        &lt;input id=&quot;p2m-descricao&quot; placeholder=&quot;Descreva o projeto&quot; style=&quot;width:100%;min-height:40px;border:1px solid #2a4268;border-radius:8px;background:#071225;color:#fff;padding:9px 12px;font-size:13px;font-family:var(--font-main);outline:none&quot; type=&quot;text&quot;/&gt;
-      &lt;/label&gt;
-      &lt;label&gt;
-        &lt;span style=&quot;display:block;font-family:var(--font-mono);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--brand);margin-bottom:6px&quot;&gt;Início&lt;/span&gt;
-        &lt;input id=&quot;p2m-inicio&quot; style=&quot;width:100%;min-height:40px;border:1px solid #2a4268;border-radius:8px;background:#071225;color:#fff;padding:9px 12px;font-size:13px;color-scheme:dark;outline:none&quot; type=&quot;date&quot;/&gt;
-      &lt;/label&gt;
-      &lt;label&gt;
-        &lt;span style=&quot;display:block;font-family:var(--font-mono);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--brand);margin-bottom:6px&quot;&gt;Término&lt;/span&gt;
-        &lt;input id=&quot;p2m-termino&quot; style=&quot;width:100%;min-height:40px;border:1px solid #2a4268;border-radius:8px;background:#071225;color:#fff;padding:9px 12px;font-size:13px;color-scheme:dark;outline:none&quot; type=&quot;date&quot;/&gt;
-      &lt;/label&gt;
-      &lt;label&gt;
-        &lt;span style=&quot;display:block;font-family:var(--font-mono);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--brand);margin-bottom:6px&quot;&gt;Quem Faz?&lt;/span&gt;
-        &lt;select id=&quot;p2m-quem&quot; style=&quot;width:100%;min-height:40px;border:1px solid #2a4268;border-radius:8px;background:#071225;color:#fff;padding:9px 12px;font-size:12px;font-family:var(--font-mono);font-weight:700;outline:none&quot;&gt;
-          &lt;option selected&gt;Pentagrama&lt;/option&gt;&lt;option&gt;Bolix&lt;/option&gt;&lt;option&gt;Terceiros&lt;/option&gt;
-        &lt;/select&gt;
-      &lt;/label&gt;
-    &lt;/div&gt;
-    &lt;div style=&quot;display:flex;justify-content:flex-end;gap:10px;margin-top:18px;padding-top:14px;border-top:1px solid #1e3050&quot;&gt;
-      &lt;button class=&quot;btn&quot; onclick=&quot;p2ModalFechar()&quot; type=&quot;button&quot;&gt;Cancelar&lt;/button&gt;
-      &lt;button class=&quot;btn primary&quot; onclick=&quot;p2ModalSalvar()&quot; type=&quot;button&quot;&gt;Salvar projeto&lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
 
 
 &lt;/div&gt;
@@ -3421,6 +3371,7 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
         if (_ud &amp;&amp; _ud !== &#x27;{}&#x27; &amp;&amp; _ud !== &#x27;null&#x27; &amp;&amp; typeof sincronizarUnitsDataSalvo === &#x27;function&#x27;) sincronizarUnitsDataSalvo();
       } catch(e) {}
       atualizarTelaCompleta();
+      try { if (window.parent &amp;&amp; typeof window.parent.__cronAplicar === &#x27;function&#x27;) window.parent.__cronAplicar(); } catch(e) {}
     } finally {
       resetAplicandoNuvem = false;
     }
@@ -4220,16 +4171,6 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
   }
   function p2Limpar(){if(!confirm(&#x27;Limpar todos os projetos cadastrados?&#x27;))return;salvarProjetosExecucao({});p2Render();}
 
-  function p2ExcluirAcao(ak){
-    if(!confirm(&#x27;Excluir esta ação e todos os seus projetos? Esta operação não pode ser desfeita.&#x27;))return;
-    var data=carregarProjetosExecucao();
-    Object.keys(data).forEach(function(k){if(k.startsWith(ak+&#x27;__&#x27;))delete data[k];});
-    salvarProjetosExecucao(data);
-    var hidden;try{hidden=JSON.parse(localStorage.getItem(&#x27;reset.p2.hidden.acoes&#x27;)||&#x27;[]&#x27;);}catch(e){hidden=[];}
-    if(hidden.indexOf(ak)&lt;0)hidden.push(ak);
-    try{localStorage.setItem(&#x27;reset.p2.hidden.acoes&#x27;,JSON.stringify(hidden));}catch(e){}
-    p2Render();
-  }
 
   var _p2AplicEditIdx=-1;
   function p2AplicacaoGetLista(){try{var s=localStorage.getItem(&#x27;reset.p2.aplics&#x27;);return s?JSON.parse(s):[&#x27;Unidades Bolix&#x27;];}catch(e){return[];}}
@@ -4305,79 +4246,6 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     p2AplicacaoListar();
     p2Render();
   }
-  function p2ModalAbrir(){
-    var el=document.getElementById(&#x27;p2-modal&#x27;);if(!el)return;
-    var ac=document.getElementById(&#x27;p2m-acao&#x27;);
-
-    try{ sincronizarUnitsDataSalvo(); }catch(e){}
-
-    var lista=[];
-    Object.entries(UNITS_DATA||{}).forEach(function(e){
-      var un=e[0];(e[1]||[]).forEach(function(acao){
-        var ctx=(typeof getActionContext===&#x27;function&#x27;?getActionContext(un,acao):{})||{};
-        var desc=(acao.nome||&#x27;&#x27;).replace(/^AC-\d+\s*[—\-]\s*/,&#x27;&#x27;);
-        var area=acao.areaAcao||acao.area||ctx.area||&#x27;&#x27;;
-        var pilar=acao.pilar||acao.pillar||ctx.pilar||&#x27;&#x27;;
-        var label=[un,area,pilar,(acao.idac||&#x27;&#x27;)+&#x27; — &#x27;+desc].filter(Boolean).join(&#x27; | &#x27;);
-        lista.push({un:un,acao:acao,label:label});
-      });
-    });
-    window._p2ac=lista;
-    if(ac)ac.innerHTML=lista.length
-      ? lista.map(function(x,i){return&#x27;&lt;option value=&quot;&#x27;+i+&#x27;&quot;&gt;&#x27;+p2esc(x.label)+&#x27;&lt;/option&gt;&#x27;;}).join(&#x27;&#x27;)
-      : &#x27;&lt;option value=&quot;&quot;&gt;Nenhuma ação cadastrada — crie uma ação antes&lt;/option&gt;&#x27;;
-    [&#x27;p2m-descricao&#x27;,&#x27;p2m-inicio&#x27;,&#x27;p2m-termino&#x27;].forEach(function(id){var e=document.getElementById(id);if(e)e.value=&#x27;&#x27;;});
-    try{p2ModalMelhorias();}catch(e){}
-    el.style.display=&#x27;flex&#x27;;
-  }
-  function p2ModalFechar(){var el=document.getElementById(&#x27;p2-modal&#x27;);if(el)el.style.display=&#x27;none&#x27;;}
-  function p2ModalMelhorias(){
-    var ac=document.getElementById(&#x27;p2m-acao&#x27;);var ml=document.getElementById(&#x27;p2m-melhoria&#x27;);
-    var lista=window._p2ac||[];var item=lista[parseInt((ac&amp;&amp;ac.value)||&#x27;0&#x27;,10)]||lista[0];
-    if(!ml)return;
-    if(!item){ml.innerHTML=&#x27;&lt;option value=&quot;&quot;&gt;Nenhuma melhoria disponível&lt;/option&gt;&#x27;;p2ModalAtualizarCodigo();return;}
-    var mels=Array.isArray(item.acao.melhorias)?item.acao.melhorias:[];
-    ml.innerHTML=mels.length
-      ? mels.map(function(m,i){return&#x27;&lt;option value=&quot;&#x27;+i+&#x27;&quot;&gt;&#x27;+p2esc((m.idm||(&#x27;M&#x27;+String(i+1).padStart(2,&#x27;0&#x27;)))+&#x27; — &#x27;+(m.desc||&#x27;&#x27;))+&#x27;&lt;/option&gt;&#x27;;}).join(&#x27;&#x27;)
-      : &#x27;&lt;option value=&quot;&quot;&gt;Esta ação ainda não possui melhorias&lt;/option&gt;&#x27;;
-    p2ModalAtualizarCodigo();
-  }
-  function p2ModalAtualizarCodigo(){
-    var ac=document.getElementById(&#x27;p2m-acao&#x27;);var ml=document.getElementById(&#x27;p2m-melhoria&#x27;);var info=document.getElementById(&#x27;p2m-codigo-info&#x27;);
-    var lista=window._p2ac||[];var item=lista[parseInt((ac&amp;&amp;ac.value)||&#x27;0&#x27;,10)]||lista[0];
-    if(!info||!item)return;
-    var mels=Array.isArray(item.acao.melhorias)?item.acao.melhorias:[];
-    var mel=mels[parseInt((ml&amp;&amp;ml.value)||&#x27;0&#x27;,10)]||mels[0];
-    if(!mel){info.textContent=&#x27;Código gerado automaticamente ao salvar&#x27;;return;}
-    var k=projetoKey(item.un||item.unidade,item.acao,mel);var d=normalizarProjetosExecucaoChaves(carregarProjetosExecucao());
-    info.textContent=&#x27;Próximo código: &#x27;+projetoNovoCodigo(projetosDaMelhoria(d,item.un||item.unidade,item.acao,mel))+&#x27; — será gerado automaticamente ao salvar&#x27;;
-  }
-  function p2ModalSalvar(){
-    var lista=window._p2ac||[];var ac=document.getElementById(&#x27;p2m-acao&#x27;);var ml=document.getElementById(&#x27;p2m-melhoria&#x27;);
-    var item=lista[parseInt((ac&amp;&amp;ac.value)||&#x27;0&#x27;,10)];if(!item){console.warn(&#x27;[p2ModalSalvar] Nenhuma ação com melhorias disponível.&#x27;);return;}
-    var mels=Array.isArray(item.acao.melhorias)?item.acao.melhorias:[];
-    var mel=mels[parseInt((ml&amp;&amp;ml.value)||&#x27;0&#x27;,10)];if(!mel){console.warn(&#x27;[p2ModalSalvar] Nenhuma melhoria selecionada.&#x27;);return;}
-    var un = item.un || item.unidade || &#x27;&#x27;;
-    var key=projetoKey(un,item.acao,mel);var ak=projetoActionKey(un,item.acao);
-    var d=normalizarProjetosExecucaoChaves(carregarProjetosExecucao());var l=projetosDaMelhoria(d,un,item.acao,mel);
-    var ini=(document.getElementById(&#x27;p2m-inicio&#x27;)||{}).value||&#x27;&#x27;;
-    var ter=(document.getElementById(&#x27;p2m-termino&#x27;)||{}).value||&#x27;&#x27;;
-    var cod=projetoNovoCodigo(l);
-    var desc=((document.getElementById(&#x27;p2m-descricao&#x27;)||{}).value||&#x27;&#x27;).trim()||&#x27;Novo projeto&#x27;;
-    l.push({codigo:cod,descricao:desc,unidade:un,acao:item.acao.idac||&#x27;&#x27;,melhoria:mel.idm||&#x27;&#x27;,
-      prioridade:(document.getElementById(&#x27;p2m-prioridade&#x27;)||{}).value||&#x27;Média&#x27;,
-      quem:(document.getElementById(&#x27;p2m-quem&#x27;)||{}).value||&#x27;Pentagrama&#x27;,
-      inicio:ini,termino:ter,dias:projetosDias(ini,ter)});
-    d[key]=l;
-    d = normalizarProjetosExecucaoChaves(d);
-    salvarProjetosExecucao(d);
-    try { if (typeof P2_EXP !== 'undefined') P2_EXP.add(ak); } catch(e) {}
-    p2ModalFechar();
-    try { p2Render(); } catch(e) {}
-    setTimeout(function(){ try { p2Render(); } catch(e) {} }, 60);
-    setTimeout(function(){ try { p2Render(); } catch(e) {} }, 250);
-  }
-
   function p2Render(){
     var host=document.getElementById(&#x27;p2-host&#x27;);
     if(!host||typeof UNITS_DATA===&#x27;undefined&#x27;)return;
@@ -4386,7 +4254,6 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
     try{ sincronizarUnitsDataSalvo(); }catch(e){}
     var fi=p2nr((document.getElementById(&#x27;p2-filter&#x27;)||{}).value||&#x27;&#x27;);
     var data=normalizarProjetosExecucaoChaves(carregarProjetosExecucao());
-    try { localStorage.removeItem(&#x27;reset.p2.hidden.acoes&#x27;); } catch(e) {}
     var html=&#x27;&#x27;;
     var p2PrioOrder={&#x27;maxima&#x27;:0,&#x27;alta&#x27;:1,&#x27;media&#x27;:2,&#x27;baixa&#x27;:3};
     function p2GetAcaoPrio(un,acao){var ak=projetoActionKey(un,acao);var k=&#x27;reset.p2ac.&#x27;+ak+&#x27;.prioridade&#x27;;try{return localStorage.getItem(k)||&#x27;Média&#x27;;}catch(e){return&#x27;Média&#x27;;}}
@@ -5101,6 +4968,8 @@ window.showTab=function(tab){
 if(_st)_st(tab);
 var s=document.getElementById(&#x27;section-apontamentos&#x27;);
 if(s)s.classList.toggle(&#x27;hidden&#x27;,tab!==&#x27;apontamentos&#x27;);
+var tb=document.getElementById(&#x27;tab-apontamentos&#x27;);
+if(tb)tb.classList.toggle(&#x27;active&#x27;,tab===&#x27;apontamentos&#x27;);
 if(tab===&#x27;apontamentos&#x27;){
 var ac=ga(),se=document.getElementById(&#x27;apt-acao&#x27;);
 if(se){se.innerHTML=&#x27;&lt;option value=&quot;&quot;&gt;- Selecione a acao -&lt;/option&gt;&#x27;+ac.map(function(a){return&#x27;&lt;option value=&quot;&#x27;+a.ak+&#x27;&quot;&gt;&#x27;+ec(a.idac+(a.t?&#x27; - &#x27;+a.t.substring(0,28):&#x27;&#x27;))+&#x27; (&#x27;+ec(a.un.substring(0,13))+&#x27;)&lt;/option&gt;&#x27;;}).join(&#x27;&#x27;);}
@@ -10345,6 +10214,8 @@ window.excluirMelhoria=function(b){
     const {pillarKey, pillar}=ensurePillar(areaKey, area, payload.pillar, index);
     const {unitKey, unit}=ensureUnit(areaKey, pillarKey, pillar, payload.unidade, index);
     if (unit.actions[payload.idac]) return;
+    /* T59: evita duplicar aba se a ação já foi criada pelo fluxo "Criar Ação" (v18-captura-salvar) na mesma sessão */
+    if (unit.actionnav && Array.from(unit.actionnav.children).some(function(t){ return (t.textContent||'').trim().toUpperCase() === String(payload.idac||'').toUpperCase(); })) return;
     const actionTab=document.createElement('button'); actionTab.className='reset-subtab reset-action-tab'; actionTab.type='button'; actionTab.dataset.actionIndex=index; actionTab.dataset.areaKey=areaKey; actionTab.dataset.pillarKey=pillarKey; actionTab.dataset.unitKey=unitKey; actionTab.textContent=payload.idac; actionTab.title=(payload.idac+' '+payload.titulo).trim(); actionTab.onclick=function(){ currentAreaKey=areaKey; currentPillarKey=pillarKey; currentUnitKey=unitKey; showActionTab(index); };
     unit.actionnav.appendChild(actionTab);
     unit.actions[payload.idac]={index, code:payload.idac, description:payload.titulo, tab:actionTab};
@@ -10382,8 +10253,8 @@ window.excluirMelhoria=function(b){
         const idac=(action.idac || action.id || '').toString().toUpperCase(); if (!idac) return;
         const key=unidade+'|'+idac;
         const payload={
-          area: AREA_BY_UNIT_ACTION[key] || '',
-          pillar: PILLAR_BY_UNIT_ACTION[key] || stripActionTitle(action.nome || action.titulo || '', idac) || 'Pilar',
+          area: AREA_BY_UNIT_ACTION[key] || action.area || action.areaAcao || '',
+          pillar: PILLAR_BY_UNIT_ACTION[key] || action.pilar || action.pillar || '',
           unidade: unidade,
           idac: idac,
           titulo: stripActionTitle(action.nome || action.titulo || '', idac) || 'Nova ação',
@@ -11191,6 +11062,7 @@ window.excluirMelhoria=function(b){
   }
 
   function apply(){
+    return; /* T58: desativado — botão "ATUALIZAR AÇÃO" agora é injetado apenas pelo v39, evitando handler duplicado/alert duplicado */
     ensureCronUpdateBridge();
     document.querySelectorAll('#pane-acoes iframe.reset-frame').forEach(function(frame){
       if (frame.id !== 'frame-acoes') injectUpdateButton(frame);
@@ -11369,7 +11241,7 @@ window.excluirMelhoria=function(b){
       frame.dataset.pillarName = payload.pillar;
       var tab = document.querySelector('#pillar-subtabs-host .reset-action-tab[data-action-index="' + frame.dataset.actionIndex + '"]');
       if (tab) { tab.textContent = payload.idac; tab.title = payload.idac + ' — ' + payload.titulo; }
-      alert('Ação atualizada no cronograma.');
+      if (typeof toast === 'function') toast('Ação atualizada no cronograma'); else alert('Ação atualizada no cronograma.');
     } catch(err) {
       alert('Não foi possível atualizar o cronograma: ' + (err && err.message ? err.message : err));
     }
@@ -12216,107 +12088,6 @@ window.excluirMelhoria=function(b){
     return pillar.units[unitKey]={name:unitName,tab:tab,actionnav:actionnav,firstIndex:firstIndex||'',actions:{}};
   }
 
-  function renderCronogramaForcado(){
-    var frame=document.getElementById('frame-cronograma');
-    var cw=frame&&frame.contentWindow, doc=docOf(frame);
-    if(!cw||!doc||!cw.UNITS_DATA)return;
-    try{
-      var container=doc.getElementById('unit-buttons');
-      var section=doc.getElementById('section-unidades');
-      if(!container||!section)return;
-
-      if(!cw.unitMap)cw.unitMap={};
-      Object.keys(cw.unitMap).forEach(function(k){delete cw.unitMap[k];});
-      container.innerHTML='';
-
-      Object.keys(cw.UNITS_DATA).forEach(function(unidade){
-        var actions=Array.isArray(cw.UNITS_DATA[unidade])?cw.UNITS_DATA[unidade]:[];
-        if(!actions.length)return;
-        var key='unit-'+slug(unidade);
-        cw.unitMap[unidade]={key:key,cor:'#a8cc3a'};
-
-        var box=doc.createElement('div');
-        box.className='unit-box';
-        var btn=doc.createElement('button');
-        btn.className='unit-btn';
-        btn.id='btn-'+key;
-        btn.type='button';
-        btn.textContent=unidade;
-        var stats=doc.createElement('div');
-        stats.className='unit-stats';
-        var qtdMel=actions.reduce(function(t,a){return t+((a.melhorias||[]).length);},0);
-        stats.innerHTML='<strong>'+actions.length+'</strong> ações · <strong>'+qtdMel+'</strong> melhorias · <strong>0</strong> concluídas <strong>(0%)</strong>';
-        box.appendChild(btn); box.appendChild(stats); container.appendChild(box);
-
-        var panel=doc.getElementById(key);
-        if(!panel){
-          panel=doc.createElement('div');
-          panel.className='panel hidden';
-          panel.id=key;
-          panel.innerHTML='<h2 id="'+key+'-title"></h2><p id="'+key+'-info"></p><div class="action-list" id="'+key+'-actions"></div>';
-          section.appendChild(panel);
-        }
-        var h=doc.getElementById(key+'-title'), p=doc.getElementById(key+'-info'), list=doc.getElementById(key+'-actions');
-        if(h)h.textContent=unidade;
-        if(p)p.textContent=actions.length+' ações · '+qtdMel+' melhorias associadas.';
-        if(list){
-          list.innerHTML='';
-          actions.forEach(function(a){
-            var b=doc.createElement('button');
-            b.className='action-btn';
-            b.type='button';
-            var titulo=s(a.titulo||a.nome||'Nova ação').replace(/^AC-\d+\s*[—-]?\s*/i,'');
-            b.innerHTML='<span class="action-btn-title"><strong>'+s(a.idac)+'</strong> — '+titulo+'</span><span class="action-meta-side"><small>'+s(a.area||'')+'</small><span class="pill">'+(a.melhorias||[]).length+' melhorias</span></span>';
-            list.appendChild(b);
-          });
-        }
-        btn.onclick=function(){
-          Object.keys(cw.unitMap).forEach(function(u){
-            var k=cw.unitMap[u].key;
-            var pp=doc.getElementById(k); if(pp)pp.classList.add('hidden');
-            var bb=doc.getElementById('btn-'+k); if(bb)bb.classList.remove('active');
-          });
-          panel.classList.remove('hidden');
-          btn.classList.add('active');
-        };
-      });
-
-      var first=container.querySelector('.unit-btn');
-      if(first)first.click();
-
-      /* T34: contadores direto de cw.UNITS_DATA (const UNITS_DATA != cw.UNITS_DATA) */
-      try{
-        var _sumA=0,_sumM=0;
-        Object.values(cw.UNITS_DATA||{}).forEach(function(acts){
-          if(!Array.isArray(acts))return;
-          _sumA+=acts.length;
-          acts.forEach(function(a){_sumM+=(a.melhorias||[]).length;});
-        });
-        var _eA=doc.getElementById('summary-acoes-total');
-        var _eM=doc.getElementById('summary-melhorias-total');
-        if(_eA)_eA.textContent=_sumA;
-        if(_eM)_eM.textContent=_sumM;
-        /* T34: última previsão = maior data de termino/previsao em projetosExecucao.v1 */
-        var _pjRaw='';try{_pjRaw=cw.localStorage.getItem('reset.projetosExecucao.v1')||'';}catch(_ex){}
-        var _pjData={};try{_pjData=_pjRaw?JSON.parse(_pjRaw):{};}catch(_ex){}
-        var _maxDt=null;
-        Object.values(_pjData||{}).forEach(function(arr){
-          if(!Array.isArray(arr))return;
-          arr.forEach(function(p){
-            var d=p.termino||p.previsao||'';
-            if(!d||d.length<8)return;
-            var dt=new Date(d.length===10?d+'T00:00':d);
-            if(!isNaN(dt)&&(!_maxDt||dt>_maxDt))_maxDt=dt;
-          });
-        });
-        var _eP=doc.getElementById('summary-previsao-final');
-        if(_eP)_eP.textContent=_maxDt?(String(_maxDt.getDate()).padStart(2,'0')+'/'+String(_maxDt.getMonth()+1).padStart(2,'0')+'/'+_maxDt.getFullYear()):'--/--/----';
-      }catch(e){}
-      try{ if(typeof cw.renderProjetosExecucao==='function')cw.renderProjetosExecucao(); }catch(e){}
-      try{ if(typeof cw.p2Render==='function')cw.p2Render(); }catch(e){}
-    }catch(e){console.error('renderCronogramaForcado v18',e);}
-  }
-
   function syncCron(payload){
     var frame=document.getElementById('frame-cronograma');
     var cw=frame&&frame.contentWindow;
@@ -12341,7 +12112,7 @@ window.excluirMelhoria=function(b){
     }
     /* T54: salva usando localStorage direto (mais robusto que cw.localStorage no HTTPS). */
     try{ localStorage.setItem('reset.units_data',JSON.stringify(cw.UNITS_DATA)); }catch(e){}
-    renderCronogramaForcado();
+    if(typeof window.__cronSyncUnidades==='function') window.__cronSyncUnidades();
     return true;
   }
 
@@ -12444,7 +12215,7 @@ window.excluirMelhoria=function(b){
     setTimeout(bloquearSalvarAntigo,500);
   });
   var fc=document.getElementById('frame-cronograma');
-  if(fc)fc.addEventListener('load',function(){setTimeout(renderCronogramaForcado,700);});
+  if(fc)fc.addEventListener('load',function(){setTimeout(function(){ if(typeof window.__cronSyncUnidades==='function') window.__cronSyncUnidades(); },700);});
 })();
 </script>
 
@@ -13643,6 +13414,7 @@ window.excluirMelhoria=function(b){
         if(k.indexOf('reset.p2ac.'+ak+'.')===0) del=true;
         if(k.indexOf('reset.acao.v1.'+acId+'.')===0) del=true;
         if(k.indexOf('reset.field.v1.'+acId+'.')===0) del=true;
+        if(k.indexOf('reset.obslog.v1.'+ak)===0) del=true;
         melIds.forEach(function(mid){
           if(k.indexOf('reset.field.v1.'+mid+'.')===0) del=true;
           if(k.indexOf('reset.obslog.v1.'+mid)===0) del=true;
@@ -15450,20 +15222,4 @@ window.parentSyncActionMelhorias=function(p){
   });
   ac.melhorias=nm;ac.qtd_melhorias=nm.length;
   try{var PK='reset.projetosExecucao.v1';
-  function sl(v){return String(v||'')
-    .toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g,'')
-    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
-  var vs=new Set(nm.map(function(m){return sl(un)+'__'+sl(id)+'__'+sl(m.idm);}));
-  var pk=sl(un)+'__'+sl(id)+'__';var pj={};try{pj=JSON.parse(
-    localStorage.getItem(PK)||'{}')}catch(e){}
-  var cl={};Object.keys(pj).forEach(function(k){
-    if(!k.startsWith(pk)||vs.has(k))cl[k]=pj[k];});
-  localStorage.setItem(PK,JSON.stringify(cl));}catch(e){}
-  try{localStorage.setItem('reset.units_data',JSON.stringify(UNITS_DATA));}catch(e){}
-  try{if(typeof syncCron==='function')syncCron({area:ac.area||'',
-    pilar:ac.pillar||ac.pilar||'',unidade:un,idac:id,
-    titulo:ac.titulo||'',melhorias:nm});}catch(e){}};
-})();
-</script>
-                                                                                                  
+  function sl(
