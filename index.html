@@ -3371,7 +3371,6 @@ body &gt; header div[style*=&quot;background: var(--surface)&quot;] { display: n
         if (_ud &amp;&amp; _ud !== &#x27;{}&#x27; &amp;&amp; _ud !== &#x27;null&#x27; &amp;&amp; typeof sincronizarUnitsDataSalvo === &#x27;function&#x27;) sincronizarUnitsDataSalvo();
       } catch(e) {}
       atualizarTelaCompleta();
-      try { if (window.parent &amp;&amp; typeof window.parent.__cronAplicar === &#x27;function&#x27;) window.parent.__cronAplicar(); } catch(e) {}
     } finally {
       resetAplicandoNuvem = false;
     }
